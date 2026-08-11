@@ -236,6 +236,30 @@ function showToast({ title = "", description = "", variant = "default", duration
 }
 
 /* =========================================================
+   Accordion (e.g. FAQ)
+   data-accordion (container, optional data-accordion-multiple to allow many open)
+   data-accordion-trigger wraps/precedes a sibling data-accordion-panel
+   Each item: <div data-accordion-item> <button data-accordion-trigger>...</button> <div data-accordion-panel class="hidden">...</div> </div>
+   ========================================================= */
+document.addEventListener("click", (e) => {
+  const trigger = e.target.closest("[data-accordion-trigger]");
+  if (!trigger) return;
+  const item = trigger.closest("[data-accordion-item]");
+  const panel = item.querySelector("[data-accordion-panel]");
+  const container = trigger.closest("[data-accordion]");
+  const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+  if (container && !container.hasAttribute("data-accordion-multiple")) {
+    container.querySelectorAll("[data-accordion-trigger]").forEach((t) => {
+      t.setAttribute("aria-expanded", "false");
+      t.closest("[data-accordion-item]")?.querySelector("[data-accordion-panel]")?.classList.add("hidden");
+    });
+  }
+  trigger.setAttribute("aria-expanded", isOpen ? "false" : "true");
+  panel.classList.toggle("hidden", isOpen);
+});
+
+/* =========================================================
    Sidebar collapse (dashboards) + mobile nav
    ========================================================= */
 document.addEventListener("click", (e) => {

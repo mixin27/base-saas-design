@@ -1,11 +1,515 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nimbus — Run your entire SaaS operation from one place</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/landing.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
-    
+
+<!-- ============ NAVBAR ============ -->
+<header class="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
+  <div class="container flex items-center justify-between h-16">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-primary text-primary-foreground grid place-items-center"><i data-lucide="layers" style="width:15px;height:15px"></i></div>
+      <span class="font-semibold text-[15px]">Nimbus</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-7 text-sm font-medium">
+      <a href="#features" class="text-muted-foreground hover:text-foreground transition-colors">Features</a>
+      <a href="#product" class="text-muted-foreground hover:text-foreground transition-colors">Product</a>
+      <a href="#pricing" class="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
+      <a href="#faq" class="text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
+      <a href="#download" class="text-muted-foreground hover:text-foreground transition-colors">Mobile apps</a>
+    </nav>
+    <div class="hidden md:flex items-center gap-2">
+      <button class="btn btn-ghost btn-icon-sm" onclick="Theme.toggle()">
+        <i data-lucide="sun" class="dark:hidden"></i>
+        <i data-lucide="moon" class="hidden dark:block"></i>
+      </button>
+      <a href="../tenant/dashboard.html" class="btn btn-ghost btn-sm">Log in</a>
+      <a href="#pricing" class="btn btn-primary btn-sm">Start free trial</a>
+    </div>
+    <button class="md:hidden btn btn-ghost btn-icon" data-landing-menu-toggle><i data-lucide="menu"></i></button>
+  </div>
+  <div id="landing-mobile-menu" class="hidden md:hidden border-t border-border px-4 py-3 space-y-1">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#product" class="nav-link">Product</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="#faq" class="nav-link">FAQ</a>
+    <a href="#download" class="nav-link">Mobile apps</a>
+    <a href="../tenant/dashboard.html" class="btn btn-outline btn-sm w-full mt-2">Log in</a>
+    <a href="#pricing" class="btn btn-primary btn-sm w-full">Start free trial</a>
+  </div>
+</header>
+
+<main>
+  <!-- ============ HERO ============ -->
+  <section class="hero-glow relative overflow-hidden">
+    <div class="bg-grid absolute inset-0 h-[520px]"></div>
+    <div class="container relative pt-16 pb-8 lg:pt-24 lg:pb-12">
+      <div class="max-w-3xl mx-auto text-center">
+        <a href="#product" class="badge badge-outline bg-background/70 mb-5">
+          <i data-lucide="sparkles"></i> New — dynamic, non-enumerated RBAC for every workspace
+        </a>
+        <h1 class="text-4xl sm:text-5xl font-bold tracking-tight leading-[1.08]">
+          The control plane for<br class="hidden sm:block" /> your entire SaaS business
+        </h1>
+        <p class="text-muted-foreground text-base sm:text-lg mt-5 max-w-xl mx-auto">
+          Tenants, billing, support, roles, feature flags, and transactional email in one admin surface — plus a workspace experience your customers actually enjoy using.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+          <a href="#pricing" class="btn btn-primary btn-lg w-full sm:w-auto">Start free trial <i data-lucide="arrow-right"></i></a>
+          <a href="#product" class="btn btn-outline btn-lg w-full sm:w-auto"><i data-lucide="play-circle"></i> Watch product tour</a>
+        </div>
+        <p class="text-xs text-muted-foreground mt-4">No credit card required · 14-day trial · Cancel anytime</p>
+      </div>
+
+      <!-- product preview mockup -->
+      <div class="mt-14 max-w-5xl mx-auto">
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <span class="browser-dot"></span><span class="browser-dot"></span><span class="browser-dot"></span>
+            <div class="mx-auto flex items-center gap-1.5 text-xs text-muted-foreground bg-background border border-border rounded-md px-3 py-1"><i data-lucide="lock" style="width:11px;height:11px"></i> app.nimbus.io/admin</div>
+          </div>
+          <div class="grid grid-cols-[180px_1fr] bg-background">
+            <div class="hidden sm:block bg-sidebar border-r border-sidebar-border p-3 space-y-0.5">
+              <p class="nav-group-label">Platform</p>
+              <span class="nav-link active"><i data-lucide="layout-dashboard"></i> Dashboard</span>
+              <span class="nav-link"><i data-lucide="building-2"></i> Tenants</span>
+              <span class="nav-link"><i data-lucide="users"></i> Users</span>
+              <span class="nav-link"><i data-lucide="shield"></i> Roles</span>
+              <span class="nav-link"><i data-lucide="credit-card"></i> Plans</span>
+            </div>
+            <div class="p-4 space-y-3 text-left">
+              <div class="grid grid-cols-3 gap-3">
+                <div class="card"><div class="card-content pt-4"><p class="text-[10px] text-muted-foreground">MRR</p><p class="text-lg font-bold">$84,210</p></div></div>
+                <div class="card"><div class="card-content pt-4"><p class="text-[10px] text-muted-foreground">Active tenants</p><p class="text-lg font-bold">1,248</p></div></div>
+                <div class="card"><div class="card-content pt-4"><p class="text-[10px] text-muted-foreground">Open tickets</p><p class="text-lg font-bold">27</p></div></div>
+              </div>
+              <div class="card overflow-hidden">
+                <table class="dtable">
+                  <thead><tr><th>Tenant</th><th>Plan</th><th>Status</th><th class="text-right">MRR</th></tr></thead>
+                  <tbody>
+                    <tr><td class="font-medium">Acme Inc.</td><td><span class="badge badge-outline">Enterprise</span></td><td><span class="badge badge-success">Active</span></td><td class="text-right font-mono">$1,240</td></tr>
+                    <tr><td class="font-medium">Northwind Co.</td><td><span class="badge badge-outline">Growth</span></td><td><span class="badge badge-warning">Trialing</span></td><td class="text-right font-mono">$0</td></tr>
+                    <tr><td class="font-medium">Globex</td><td><span class="badge badge-outline">Scale</span></td><td><span class="badge badge-success">Active</span></td><td class="text-right font-mono">$640</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LOGO CLOUD ============ -->
+  <section class="border-y border-border py-8 overflow-hidden">
+    <div class="container">
+      <p class="text-center text-xs text-muted-foreground mb-6">Trusted by growing teams across fintech, devtools, and healthtech</p>
+    </div>
+    <div class="overflow-hidden">
+      <div class="logo-track text-muted-foreground/70">
+        <span class="text-lg font-bold tracking-tight">Acme Inc.</span>
+        <span class="text-lg font-bold tracking-tight">Northwind</span>
+        <span class="text-lg font-bold tracking-tight">Globex</span>
+        <span class="text-lg font-bold tracking-tight">Initech</span>
+        <span class="text-lg font-bold tracking-tight">Umbrella Labs</span>
+        <span class="text-lg font-bold tracking-tight">Stark Cloud</span>
+        <span class="text-lg font-bold tracking-tight">Hooli</span>
+        <span class="text-lg font-bold tracking-tight">Soylent Corp</span>
+        <!-- duplicate for seamless loop -->
+        <span class="text-lg font-bold tracking-tight">Acme Inc.</span>
+        <span class="text-lg font-bold tracking-tight">Northwind</span>
+        <span class="text-lg font-bold tracking-tight">Globex</span>
+        <span class="text-lg font-bold tracking-tight">Initech</span>
+        <span class="text-lg font-bold tracking-tight">Umbrella Labs</span>
+        <span class="text-lg font-bold tracking-tight">Stark Cloud</span>
+        <span class="text-lg font-bold tracking-tight">Hooli</span>
+        <span class="text-lg font-bold tracking-tight">Soylent Corp</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section id="features" class="container py-20 lg:py-28">
+    <div class="max-w-2xl mx-auto text-center">
+      <p class="eyebrow justify-center"><i data-lucide="grid-2x2"></i> Everything included</p>
+      <h2 class="text-3xl font-bold tracking-tight mt-3">One platform, every base you need</h2>
+      <p class="text-muted-foreground mt-3">Stop stitching together five tools to run your SaaS. Nimbus ships the boring-but-essential parts so your team builds product, not internal admin tools.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-14">
+      <div class="card p-6">
+        <div class="feature-icon"><i data-lucide="building-2"></i></div>
+        <p class="font-semibold mt-4">Multi-tenant management</p>
+        <p class="text-sm text-muted-foreground mt-1.5">Provision, suspend, and impersonate tenants. Full visibility into every workspace on the platform.</p>
+      </div>
+      <div class="card p-6">
+        <div class="feature-icon"><i data-lucide="shield-check"></i></div>
+        <p class="font-semibold mt-4">Dynamic RBAC</p>
+        <p class="text-sm text-muted-foreground mt-1.5">Build roles from atomic permissions instead of a fixed enum — at the platform level and inside every tenant.</p>
+      </div>
+      <div class="card p-6">
+        <div class="feature-icon"><i data-lucide="credit-card"></i></div>
+        <p class="font-semibold mt-4">Plans, subscriptions &amp; add-ons</p>
+        <p class="text-sm text-muted-foreground mt-1.5">Metered and flat pricing, add-on modules, proration, and dunning — without touching Stripe's dashboard.</p>
+      </div>
+      <div class="card p-6">
+        <div class="feature-icon"><i data-lucide="life-buoy"></i></div>
+        <p class="font-semibold mt-4">Support ticketing</p>
+        <p class="text-sm text-muted-foreground mt-1.5">A shared queue across every tenant, with SLA timers and internal notes built in.</p>
+      </div>
+      <div class="card p-6">
+        <div class="feature-icon"><i data-lucide="flag"></i></div>
+        <p class="font-semibold mt-4">Feature flags</p>
+        <p class="text-sm text-muted-foreground mt-1.5">Roll out by tenant, plan, or percentage. Kill a feature instantly without a redeploy.</p>
+      </div>
+      <div class="card p-6">
+        <div class="feature-icon"><i data-lucide="mail"></i></div>
+        <p class="font-semibold mt-4">Transactional &amp; marketing email</p>
+        <p class="text-sm text-muted-foreground mt-1.5">Templates, a delivery queue, retries, bounce and complaint handling — one system for every email your product sends.</p>
+      </div>
+      <div class="card p-6">
+        <div class="feature-icon"><i data-lucide="megaphone"></i></div>
+        <p class="font-semibold mt-4">Announcements &amp; broadcast</p>
+        <p class="text-sm text-muted-foreground mt-1.5">Push in-app announcements and notifications platform-wide or scoped to a single workspace.</p>
+      </div>
+      <div class="card p-6">
+        <div class="feature-icon"><i data-lucide="plug-zap"></i></div>
+        <p class="font-semibold mt-4">API &amp; webhooks</p>
+        <p class="text-sm text-muted-foreground mt-1.5">Scoped access tokens, app registrations, and outbound webhooks for every tenant that wants to integrate.</p>
+      </div>
+      <div class="card p-6">
+        <div class="feature-icon"><i data-lucide="settings-2"></i></div>
+        <p class="font-semibold mt-4">Platform &amp; workspace settings</p>
+        <p class="text-sm text-muted-foreground mt-1.5">Sane defaults, deep configurability — from platform-wide policy down to a single workspace's preferences.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRODUCT HIGHLIGHTS ============ -->
+  <section id="product" class="border-t border-border">
+    <div class="container py-20 lg:py-28 space-y-24">
+
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <p class="eyebrow"><i data-lucide="building-2"></i> Admin console</p>
+          <h3 class="text-2xl sm:text-3xl font-bold tracking-tight mt-3">See every tenant, in one queryable view</h3>
+          <p class="text-muted-foreground mt-3">Search, filter by plan or status, sort by MRR, and act in bulk — suspend, export, or message a segment of tenants without writing a script.</p>
+          <ul class="mt-5 space-y-2.5 text-sm">
+            <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success mt-0.5"></i> Impersonate a tenant to debug from their point of view</li>
+            <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success mt-0.5"></i> Full audit trail on every admin action</li>
+            <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success mt-0.5"></i> Bulk export, bulk plan changes, bulk messaging</li>
+          </ul>
+        </div>
+        <div class="browser-frame">
+          <div class="browser-bar"><span class="browser-dot"></span><span class="browser-dot"></span><span class="browser-dot"></span></div>
+          <div class="p-3">
+            <div class="card overflow-hidden">
+              <table class="dtable">
+                <thead><tr><th><input type="checkbox" class="checkbox"/></th><th>Tenant</th><th>Plan</th><th>Status</th><th class="text-right">MRR</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" class="checkbox" checked/></td><td class="font-medium">Umbrella Labs</td><td><span class="badge badge-outline">Enterprise</span></td><td><span class="badge badge-success">Active</span></td><td class="text-right font-mono">$2,100</td></tr>
+                  <tr><td><input type="checkbox" class="checkbox" checked/></td><td class="font-medium">Wayne Digital</td><td><span class="badge badge-outline">Growth</span></td><td><span class="badge badge-success">Active</span></td><td class="text-right font-mono">$320</td></tr>
+                  <tr><td><input type="checkbox" class="checkbox"/></td><td class="font-medium">Stark Cloud</td><td><span class="badge badge-outline">Scale</span></td><td><span class="badge badge-destructive">Past due</span></td><td class="text-right font-mono">$880</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex items-center justify-between mt-3 px-1">
+              <p class="text-xs text-muted-foreground">2 selected</p>
+              <div class="flex gap-2"><button class="btn btn-outline btn-sm"><i data-lucide="download"></i> Export</button><button class="btn btn-outline btn-sm"><i data-lucide="mail"></i> Message</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="lg:order-2">
+          <p class="eyebrow"><i data-lucide="shield-check"></i> Dynamic RBAC</p>
+          <h3 class="text-2xl sm:text-3xl font-bold tracking-tight mt-3">Roles built from permissions, not a fixed list</h3>
+          <p class="text-muted-foreground mt-3">Compose roles from granular, resource-scoped permissions instead of picking from a hardcoded enum. Platform admins and tenant owners both get the same power, scoped to what they own.</p>
+          <ul class="mt-5 space-y-2.5 text-sm">
+            <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success mt-0.5"></i> Resource + action permission model (e.g. <code class="kbd">billing.invoices.void</code>)</li>
+            <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success mt-0.5"></i> Clone, version, and preview a role before assigning it</li>
+            <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success mt-0.5"></i> Same engine at platform scope and inside every workspace</li>
+          </ul>
+        </div>
+        <div class="lg:order-1 card p-5">
+          <p class="text-sm font-semibold mb-3">Editing role: <span class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">Billing Manager</span></p>
+          <div class="space-y-2.5">
+            <label class="flex items-center justify-between text-sm py-1.5 border-b border-border"><span>billing.invoices.view</span><input type="checkbox" class="switch" checked/></label>
+            <label class="flex items-center justify-between text-sm py-1.5 border-b border-border"><span>billing.invoices.void</span><input type="checkbox" class="switch" checked/></label>
+            <label class="flex items-center justify-between text-sm py-1.5 border-b border-border"><span>billing.plans.change</span><input type="checkbox" class="switch"/></label>
+            <label class="flex items-center justify-between text-sm py-1.5"><span>members.remove</span><input type="checkbox" class="switch"/></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section class="border-t border-border bg-muted/40">
+    <div class="container py-14 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+      <div><p class="text-3xl font-bold tracking-tight">99.98%</p><p class="text-xs text-muted-foreground mt-1">Platform uptime</p></div>
+      <div><p class="text-3xl font-bold tracking-tight">6,400+</p><p class="text-xs text-muted-foreground mt-1">Tenants managed</p></div>
+      <div><p class="text-3xl font-bold tracking-tight">42M</p><p class="text-xs text-muted-foreground mt-1">Emails delivered / mo</p></div>
+      <div><p class="text-3xl font-bold tracking-tight">&lt;180ms</p><p class="text-xs text-muted-foreground mt-1">Median API response</p></div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="container py-20 lg:py-28">
+    <div class="max-w-2xl mx-auto text-center">
+      <p class="eyebrow justify-center"><i data-lucide="quote"></i> Customer stories</p>
+      <h2 class="text-3xl font-bold tracking-tight mt-3">Teams run leaner with Nimbus</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-5 mt-14">
+      <div class="card p-6">
+        <p class="text-sm leading-relaxed">"We replaced four internal tools with Nimbus's admin console. Support response time dropped by half in the first month."</p>
+        <div class="flex items-center gap-2.5 mt-5"><div class="avatar w-9 h-9">JM</div><div><p class="text-sm font-medium">Jordan Mensah</p><p class="text-xs text-muted-foreground">Head of Ops, Northwind</p></div></div>
+      </div>
+      <div class="card p-6">
+        <p class="text-sm leading-relaxed">"The RBAC model alone saved us a quarter of engineering time. Our compliance team finally has the audit trail they've been asking for."</p>
+        <div class="flex items-center gap-2.5 mt-5"><div class="avatar w-9 h-9">AR</div><div><p class="text-sm font-medium">Amara Reyes</p><p class="text-xs text-muted-foreground">CTO, Globex</p></div></div>
+      </div>
+      <div class="card p-6">
+        <p class="text-sm leading-relaxed">"Billing, dunning, and plan changes used to be three separate systems. Now it's one screen, and our finance team actually likes it."</p>
+        <div class="flex items-center gap-2.5 mt-5"><div class="avatar w-9 h-9">DK</div><div><p class="text-sm font-medium">Daniel Kim</p><p class="text-xs text-muted-foreground">Founder, Stark Cloud</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section id="pricing" class="border-t border-border">
+    <div class="container py-20 lg:py-28">
+      <div class="max-w-2xl mx-auto text-center">
+        <p class="eyebrow justify-center"><i data-lucide="tag"></i> Pricing</p>
+        <h2 class="text-3xl font-bold tracking-tight mt-3">Simple pricing that scales with you</h2>
+        <p class="text-muted-foreground mt-3">Every plan includes the full admin console. Higher tiers raise limits and unlock advanced governance.</p>
+        <div class="pricing-toggle-track mt-6">
+          <span class="pricing-toggle-opt active" data-pricing-period="monthly">Monthly</span>
+          <span class="pricing-toggle-opt" data-pricing-period="annual">Annual <span class="badge badge-success ml-1">-20%</span></span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mt-14 items-start">
+        <div class="card p-6 flex flex-col">
+          <p class="font-semibold">Starter</p>
+          <p class="text-xs text-muted-foreground mt-1">For small teams getting off the ground</p>
+          <p class="mt-5"><span class="text-3xl font-bold" data-price-monthly="$29" data-price-annual="$23">$29</span><span class="text-sm text-muted-foreground" data-price-period-label>/month</span></p>
+          <a href="#" class="btn btn-outline w-full mt-5">Start free trial</a>
+          <ul class="mt-6 space-y-2.5 text-sm flex-1">
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Up to 3 tenants</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> 5,000 emails / mo</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Basic roles &amp; permissions</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Community support</li>
+          </ul>
+        </div>
+
+        <div class="card p-6 flex flex-col border-foreground relative" style="border-width:2px">
+          <span class="badge badge-default absolute -top-3 left-6">Most popular</span>
+          <p class="font-semibold">Growth</p>
+          <p class="text-xs text-muted-foreground mt-1">For scaling multi-tenant products</p>
+          <p class="mt-5"><span class="text-3xl font-bold" data-price-monthly="$99" data-price-annual="$79">$99</span><span class="text-sm text-muted-foreground" data-price-period-label>/month</span></p>
+          <a href="#" class="btn btn-primary w-full mt-5">Start free trial</a>
+          <ul class="mt-6 space-y-2.5 text-sm flex-1">
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Up to 50 tenants</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> 100,000 emails / mo</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Dynamic RBAC (platform + tenant)</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Feature flags &amp; broadcasts</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Priority support</li>
+          </ul>
+        </div>
+
+        <div class="card p-6 flex flex-col">
+          <p class="font-semibold">Scale</p>
+          <p class="text-xs text-muted-foreground mt-1">For platforms with serious volume</p>
+          <p class="mt-5"><span class="text-3xl font-bold" data-price-monthly="$299" data-price-annual="$239">$299</span><span class="text-sm text-muted-foreground" data-price-period-label>/month</span></p>
+          <a href="#" class="btn btn-outline w-full mt-5">Start free trial</a>
+          <ul class="mt-6 space-y-2.5 text-sm flex-1">
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Unlimited tenants</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> 1M emails / mo + dedicated IP</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Add-on marketplace</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> Advanced audit &amp; SIEM export</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-success"></i> 99.9% uptime SLA</li>
+          </ul>
+        </div>
+
+        <div class="card p-6 flex flex-col bg-foreground text-background">
+          <p class="font-semibold">Enterprise</p>
+          <p class="text-xs opacity-70 mt-1">For regulated or high-scale orgs</p>
+          <p class="mt-5"><span class="text-3xl font-bold">Custom</span></p>
+          <a href="#" class="btn w-full mt-5" style="background:hsl(var(--background));color:hsl(var(--foreground))">Talk to sales</a>
+          <ul class="mt-6 space-y-2.5 text-sm flex-1 opacity-90">
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4"></i> Custom contracts &amp; invoicing</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4"></i> SSO/SAML &amp; SCIM provisioning</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4"></i> Dedicated infrastructure option</li>
+            <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4"></i> Named CSM &amp; onboarding</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ APP DOWNLOAD ============ -->
+  <section id="download" class="border-t border-border">
+    <div class="container py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <p class="eyebrow"><i data-lucide="smartphone"></i> Mobile</p>
+        <h2 class="text-3xl font-bold tracking-tight mt-3">Approve, respond, and monitor from your pocket</h2>
+        <p class="text-muted-foreground mt-3 max-w-md">The Nimbus mobile app mirrors your admin console — approve support escalations, get broadcast alerts, and check tenant health without opening a laptop.</p>
+        <div class="flex flex-wrap gap-3 mt-7">
+          <a href="#" class="store-badge">
+            <i data-lucide="apple"></i>
+            <span><span class="eyebrow" style="color:inherit;opacity:.7">Download on the</span><span class="name">App Store</span></span>
+          </a>
+          <a href="#" class="store-badge">
+            <i data-lucide="play"></i>
+            <span><span class="eyebrow" style="color:inherit;opacity:.7">Get it on</span><span class="name">Google Play</span></span>
+          </a>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="p-3 pt-7 space-y-2.5 text-left">
+            <div class="flex items-center justify-between"><p class="text-xs font-semibold">Alerts</p><i data-lucide="bell" class="w-3.5 h-3.5 text-muted-foreground"></i></div>
+            <div class="card p-2.5"><p class="text-[11px] font-medium">SLA breach risk</p><p class="text-[10px] text-muted-foreground mt-0.5">Ticket #4021 · Stark Cloud</p></div>
+            <div class="card p-2.5"><p class="text-[11px] font-medium">Payment failed</p><p class="text-[10px] text-muted-foreground mt-0.5">Wayne Digital · card ending 4242</p></div>
+            <div class="card p-2.5"><p class="text-[11px] font-medium">New tenant signed up</p><p class="text-[10px] text-muted-foreground mt-0.5">Pied Piper · Starter trial</p></div>
+            <div class="card p-2.5"><p class="text-[11px] font-medium">Broadcast delivered</p><p class="text-[10px] text-muted-foreground mt-0.5">98.2% delivery · 1,190 recipients</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" class="border-t border-border">
+    <div class="container py-20 lg:py-28 max-w-3xl">
+      <div class="text-center mb-12">
+        <p class="eyebrow justify-center"><i data-lucide="help-circle"></i> FAQ</p>
+        <h2 class="text-3xl font-bold tracking-tight mt-3">Questions, answered</h2>
+      </div>
+      <div data-accordion class="space-y-2.5">
+        <div class="card overflow-hidden" data-accordion-item>
+          <button class="w-full flex items-center justify-between px-5 py-4 text-left" data-accordion-trigger aria-expanded="true">
+            <span class="text-sm font-medium">Can I self-host Nimbus?</span>
+            <i data-lucide="chevron-down" class="acc-chevron w-4 h-4 text-muted-foreground"></i>
+          </button>
+          <div class="px-5 pb-4 text-sm text-muted-foreground" data-accordion-panel>Enterprise plans support dedicated infrastructure and self-hosted deployment. Starter through Scale run on our managed cloud.</div>
+        </div>
+        <div class="card overflow-hidden" data-accordion-item>
+          <button class="w-full flex items-center justify-between px-5 py-4 text-left" data-accordion-trigger aria-expanded="false">
+            <span class="text-sm font-medium">How does the dynamic RBAC model work?</span>
+            <i data-lucide="chevron-down" class="acc-chevron w-4 h-4 text-muted-foreground"></i>
+          </button>
+          <div class="px-5 pb-4 text-sm text-muted-foreground hidden" data-accordion-panel>Instead of choosing from a fixed list of roles, you compose roles from granular resource + action permissions. Create as many custom roles as you need, at both the platform and workspace level.</div>
+        </div>
+        <div class="card overflow-hidden" data-accordion-item>
+          <button class="w-full flex items-center justify-between px-5 py-4 text-left" data-accordion-trigger aria-expanded="false">
+            <span class="text-sm font-medium">What happens when I hit my plan's tenant limit?</span>
+            <i data-lucide="chevron-down" class="acc-chevron w-4 h-4 text-muted-foreground"></i>
+          </button>
+          <div class="px-5 pb-4 text-sm text-muted-foreground hidden" data-accordion-panel>We'll notify you before you hit the ceiling. Existing tenants keep working; you just won't be able to provision new ones until you upgrade.</div>
+        </div>
+        <div class="card overflow-hidden" data-accordion-item>
+          <button class="w-full flex items-center justify-between px-5 py-4 text-left" data-accordion-trigger aria-expanded="false">
+            <span class="text-sm font-medium">Do you support custom domains per tenant?</span>
+            <i data-lucide="chevron-down" class="acc-chevron w-4 h-4 text-muted-foreground"></i>
+          </button>
+          <div class="px-5 pb-4 text-sm text-muted-foreground hidden" data-accordion-panel>Yes — tenants on Growth and above can map a custom domain with automatic SSL from their workspace settings.</div>
+        </div>
+        <div class="card overflow-hidden" data-accordion-item>
+          <button class="w-full flex items-center justify-between px-5 py-4 text-left" data-accordion-trigger aria-expanded="false">
+            <span class="text-sm font-medium">Is there an API?</span>
+            <i data-lucide="chevron-down" class="acc-chevron w-4 h-4 text-muted-foreground"></i>
+          </button>
+          <div class="px-5 pb-4 text-sm text-muted-foreground hidden" data-accordion-panel>Every workspace can generate scoped access tokens and register apps under Workspace → APIs, with outbound webhooks for key events.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="border-t border-border">
+    <div class="container py-16">
+      <div class="rounded-2xl bg-foreground text-background px-8 py-14 text-center relative overflow-hidden">
+        <div class="bg-grid absolute inset-0 opacity-20"></div>
+        <div class="relative">
+          <h2 class="text-3xl font-bold tracking-tight">Ready to consolidate your SaaS admin?</h2>
+          <p class="opacity-75 mt-3 max-w-md mx-auto">Start a 14-day trial, no credit card required. Migrate your first tenants in an afternoon.</p>
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-7">
+            <a href="#pricing" class="btn btn-lg" style="background:hsl(var(--background));color:hsl(var(--foreground))">Start free trial</a>
+            <a href="#" class="btn btn-outline btn-lg" style="border-color:hsl(var(--background)/.3);color:hsl(var(--background))">Talk to sales</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t border-border">
+  <div class="container py-14 grid sm:grid-cols-2 lg:grid-cols-5 gap-8">
+    <div class="lg:col-span-2">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-md bg-primary text-primary-foreground grid place-items-center"><i data-lucide="layers" style="width:15px;height:15px"></i></div>
+        <span class="font-semibold text-[15px]">Nimbus</span>
+      </div>
+      <p class="text-sm text-muted-foreground mt-3 max-w-xs">The control plane for your SaaS business — tenants, billing, support, and roles in one place.</p>
+      <div class="flex items-center gap-2 mt-5">
+        <a href="#" class="btn btn-outline btn-icon-sm"><i data-lucide="twitter"></i></a>
+        <a href="#" class="btn btn-outline btn-icon-sm"><i data-lucide="linkedin"></i></a>
+        <a href="#" class="btn btn-outline btn-icon-sm"><i data-lucide="github"></i></a>
+      </div>
+    </div>
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">Product</p>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#features" class="text-muted-foreground hover:text-foreground">Features</a></li>
+        <li><a href="#pricing" class="text-muted-foreground hover:text-foreground">Pricing</a></li>
+        <li><a href="../design-system/index.html" class="text-muted-foreground hover:text-foreground">Design system</a></li>
+        <li><a href="#download" class="text-muted-foreground hover:text-foreground">Mobile apps</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">Company</p>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#" class="text-muted-foreground hover:text-foreground">About</a></li>
+        <li><a href="#" class="text-muted-foreground hover:text-foreground">Blog</a></li>
+        <li><a href="#" class="text-muted-foreground hover:text-foreground">Careers</a></li>
+        <li><a href="#" class="text-muted-foreground hover:text-foreground">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">Legal</p>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#" class="text-muted-foreground hover:text-foreground">Privacy policy</a></li>
+        <li><a href="#" class="text-muted-foreground hover:text-foreground">Terms of service</a></li>
+        <li><a href="#" class="text-muted-foreground hover:text-foreground">Security</a></li>
+        <li><a href="#" class="text-muted-foreground hover:text-foreground">Status</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-border py-5">
+    <div class="container flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+      <p>© 2026 Nimbus. All rights reserved.</p>
+      <p>Design mockup only — no backend, no real data.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../shared/js/ui.js"></script>
+<script src="js/landing.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>
