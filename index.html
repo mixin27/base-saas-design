@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SaaS Platform — Prototype Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="shared/css/tokens.css" />
+<link rel="stylesheet" href="shared/css/base.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+<div class="min-h-screen flex flex-col">
+  <header class="border-b border-border">
+    <div class="container flex items-center justify-between h-16">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-md bg-primary text-primary-foreground grid place-items-center"><i data-lucide="layers" style="width:15px;height:15px"></i></div>
+        <span class="font-semibold text-sm">Nimbus — SaaS Platform Prototype</span>
+      </div>
+      <button class="btn btn-ghost btn-icon" onclick="Theme.toggle()">
+        <i data-lucide="sun" class="dark:hidden"></i>
+        <i data-lucide="moon" class="hidden dark:block"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="container flex-1 py-16 max-w-5xl">
+    <p class="badge badge-secondary mb-4"><i data-lucide="flask-conical"></i> Static prototype</p>
+    <h1 class="text-3xl font-bold tracking-tight max-w-2xl">Four linked prototypes, one shared design system.</h1>
+    <p class="text-sm text-muted-foreground mt-3 max-w-xl">Plain HTML/CSS/JS, styled to the shadcn/ui "Zinc" system, deployable to Vercel with no build step. Pick a surface to explore.</p>
+
+    <div class="grid sm:grid-cols-2 gap-5 mt-10">
+      <a href="design-system/index.html" class="card block p-6 hover:border-foreground/30 transition-colors">
+        <i data-lucide="component" class="w-5 h-5 text-muted-foreground"></i>
+        <p class="font-semibold mt-3">Design system</p>
+        <p class="text-sm text-muted-foreground mt-1">Tokens, typography, and every shared component including the data table engine.</p>
+      </a>
+      <a href="landing/index.html" class="card block p-6 hover:border-foreground/30 transition-colors">
+        <i data-lucide="rocket" class="w-5 h-5 text-muted-foreground"></i>
+        <p class="font-semibold mt-3">Marketing landing page</p>
+        <p class="text-sm text-muted-foreground mt-1">Hero, features, pricing, FAQ, and app download sections.</p>
+      </a>
+      <a href="admin/dashboard.html" class="card block p-6 hover:border-foreground/30 transition-colors">
+        <i data-lucide="shield" class="w-5 h-5 text-muted-foreground"></i>
+        <p class="font-semibold mt-3">Platform admin</p>
+        <p class="text-sm text-muted-foreground mt-1">Tenants, users, RBAC, plans, support, feature flags, emails, and platform settings.</p>
+      </a>
+      <a href="tenant/dashboard.html" class="card block p-6 hover:border-foreground/30 transition-colors">
+        <i data-lucide="building-2" class="w-5 h-5 text-muted-foreground"></i>
+        <p class="font-semibold mt-3">Tenant workspace</p>
+        <p class="text-sm text-muted-foreground mt-1">Members, billing, roles, API access, onboarding, and workspace settings.</p>
+      </a>
+    </div>
+  </main>
+
+  <footer class="border-t border-border py-6">
+    <div class="container text-xs text-muted-foreground">Design mockup only — no backend, no real data.</div>
+  </footer>
+</div>
+<script src="shared/js/ui.js"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Design System — SaaS Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell">
+
+<!-- Top bar -->
+<header class="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
+  <div class="container flex items-center justify-between h-14">
+    <div class="flex items-center gap-3">
+      <a href="../index.html" class="btn btn-ghost btn-icon-sm" data-tooltip="Back to overview"><i data-lucide="arrow-left"></i></a>
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-md bg-primary text-primary-foreground grid place-items-center"><i data-lucide="component" style="width:15px;height:15px"></i></div>
+        <span class="font-semibold text-sm">Design System</span>
+        <span class="badge badge-outline">v1.0</span>
+      </div>
+    </div>
+    <nav class="hidden lg:flex items-center gap-1 text-xs">
+      <a href="#colors" class="nav-link">Colors</a>
+      <a href="#type" class="nav-link">Typography</a>
+      <a href="#buttons" class="nav-link">Buttons</a>
+      <a href="#forms" class="nav-link">Forms</a>
+      <a href="#feedback" class="nav-link">Feedback</a>
+      <a href="#overlays" class="nav-link">Overlays</a>
+      <a href="#table" class="nav-link">Data table</a>
+      <a href="#nav" class="nav-link">Navigation</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="../landing/index.html" class="btn btn-outline btn-sm hidden sm:inline-flex">Landing</a>
+      <a href="../admin/dashboard.html" class="btn btn-outline btn-sm hidden sm:inline-flex">Admin</a>
+      <a href="../tenant/dashboard.html" class="btn btn-outline btn-sm hidden sm:inline-flex">Tenant</a>
+      <button class="btn btn-ghost btn-icon" data-theme-toggle onclick="Theme.toggle()">
+        <i data-lucide="sun" class="dark:hidden"></i>
+        <i data-lucide="moon" class="hidden dark:block"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="container py-10 space-y-16 max-w-6xl">
+
+  <!-- Intro -->
+  <section>
+    <p class="badge badge-secondary mb-3"><i data-lucide="palette"></i> Foundation</p>
+    <h1 class="text-3xl font-bold tracking-tight">Design tokens &amp; components</h1>
+    <p class="text-sm text-muted-foreground mt-2 max-w-2xl">Built on the shadcn/ui "Zinc" token set, rendered as plain HTML/CSS/JS so the whole prototype runs without a build step. Every admin and tenant screen composes from what's on this page.</p>
+  </section>
+
+  <!-- Colors -->
+  <section id="colors" class="scroll-mt-20">
+    <h2 class="text-lg font-semibold mb-1">Colors</h2>
+    <p class="text-sm text-muted-foreground mb-5">Semantic tokens, not raw hex — every component reads from these so light/dark stays consistent.</p>
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+      <div class="space-y-2"><div class="h-16 rounded-lg bg-background border border-border"></div><p class="text-xs font-medium">Background</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg bg-foreground"></div><p class="text-xs font-medium">Foreground</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg bg-primary"></div><p class="text-xs font-medium">Primary</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg bg-secondary border border-border"></div><p class="text-xs font-medium">Secondary</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg bg-muted border border-border"></div><p class="text-xs font-medium">Muted</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg bg-accent border border-border"></div><p class="text-xs font-medium">Accent</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg bg-destructive"></div><p class="text-xs font-medium">Destructive</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg bg-success"></div><p class="text-xs font-medium">Success</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg bg-warning"></div><p class="text-xs font-medium">Warning</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg border border-border" style="background:hsl(var(--chart-1))"></div><p class="text-xs font-medium">Chart 1</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg border border-border" style="background:hsl(var(--chart-2))"></div><p class="text-xs font-medium">Chart 2</p></div>
+      <div class="space-y-2"><div class="h-16 rounded-lg border border-border" style="background:hsl(var(--chart-3))"></div><p class="text-xs font-medium">Chart 3</p></div>
+    </div>
+  </section>
+
+  <!-- Typography -->
+  <section id="type" class="scroll-mt-20">
+    <h2 class="text-lg font-semibold mb-1">Typography</h2>
+    <p class="text-sm text-muted-foreground mb-5">Inter for UI text, JetBrains Mono for code &amp; identifiers.</p>
+    <div class="card"><div class="card-content pt-5 space-y-3">
+      <h1 class="text-3xl font-bold tracking-tight">Heading 1 — 30px / bold</h1>
+      <h2 class="text-2xl font-semibold tracking-tight">Heading 2 — 24px / semibold</h2>
+      <h3 class="text-lg font-semibold">Heading 3 — 18px / semibold</h3>
+      <h4 class="text-sm font-semibold">Heading 4 — 14px / semibold (card titles)</h4>
+      <p class="text-sm">Body text — 14px regular. Used for descriptions, table cells, and general copy across the product.</p>
+      <p class="text-xs text-muted-foreground">Caption / muted — 12px, used for hints and metadata.</p>
+      <p class="font-mono text-xs bg-muted inline-block px-2 py-1 rounded">acct_9f21kd0Lp — mono, for IDs, tokens, code</p>
+    </div></div>
+  </section>
+
+  <!-- Buttons -->
+  <section id="buttons" class="scroll-mt-20">
+    <h2 class="text-lg font-semibold mb-1">Buttons</h2>
+    <p class="text-sm text-muted-foreground mb-5">Variants, sizes, and icon-only states.</p>
+    <div class="card"><div class="card-content pt-5 space-y-5">
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-secondary">Secondary</button>
+        <button class="btn btn-outline">Outline</button>
+        <button class="btn btn-ghost">Ghost</button>
+        <button class="btn btn-destructive">Destructive</button>
+        <button class="btn btn-link">Link button</button>
+      </div>
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button class="btn btn-primary btn-sm"><i data-lucide="plus"></i> Small</button>
+        <button class="btn btn-primary">Default</button>
+        <button class="btn btn-primary btn-lg"><i data-lucide="rocket"></i> Large</button>
+        <button class="btn btn-outline btn-icon"><i data-lucide="settings"></i></button>
+        <button class="btn btn-outline btn-icon-sm"><i data-lucide="bell"></i></button>
+        <button class="btn btn-primary" disabled>Disabled</button>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- Badges -->
+  <section>
+    <h2 class="text-lg font-semibold mb-1">Badges &amp; status</h2>
+    <p class="text-sm text-muted-foreground mb-5">Used for plan tags, roles, and record status across tables.</p>
+    <div class="card"><div class="card-content pt-5 flex flex-wrap gap-2.5">
+      <span class="badge badge-default">Default</span>
+      <span class="badge badge-secondary">Secondary</span>
+      <span class="badge badge-outline">Outline</span>
+      <span class="badge badge-success"><span class="dot" style="background:hsl(var(--success))"></span> Active</span>
+      <span class="badge badge-warning"><span class="dot" style="background:hsl(var(--warning))"></span> Trialing</span>
+      <span class="badge badge-destructive"><span class="dot" style="background:hsl(var(--destructive))"></span> Suspended</span>
+      <span class="badge badge-outline"><i data-lucide="crown"></i> Enterprise</span>
+    </div></div>
+  </section>
+
+  <!-- Forms -->
+  <section id="forms" class="scroll-mt-20">
+    <h2 class="text-lg font-semibold mb-1">Form controls</h2>
+    <p class="text-sm text-muted-foreground mb-5">Inputs, selects, checkboxes, radios, switches.</p>
+    <div class="card"><div class="card-content pt-5 grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="field-label">Workspace name</label>
+        <input class="input" placeholder="Acme Inc." />
+        <p class="field-hint">This appears on invoices and the tenant switcher.</p>
+      </div>
+      <div>
+        <label class="field-label">Search with icon</label>
+        <div class="input-icon-wrap"><i class="leading" data-lucide="search"></i><input class="input" placeholder="Search tenants..." /></div>
+      </div>
+      <div>
+        <label class="field-label">Plan</label>
+        <select class="select">
+          <option>Starter</option><option>Growth</option><option>Scale</option><option>Enterprise</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Invalid state</label>
+        <input class="input" style="border-color:hsl(var(--destructive))" value="taken@acme.com" />
+        <p class="field-error">This email is already in use.</p>
+      </div>
+      <div>
+        <label class="field-label">Notes</label>
+        <textarea class="textarea" placeholder="Internal note..."></textarea>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center gap-2.5 text-sm"><input type="checkbox" class="checkbox" checked /> Send welcome email</label>
+        <label class="flex items-center gap-2.5 text-sm"><input type="checkbox" class="checkbox" /> Require 2FA for this workspace</label>
+        <label class="flex items-center gap-2.5 text-sm"><input type="radio" name="ds-radio" class="radio" checked /> Monthly billing</label>
+        <label class="flex items-center gap-2.5 text-sm"><input type="radio" name="ds-radio" class="radio" /> Annual billing (save 20%)</label>
+        <label class="flex items-center gap-2.5 text-sm justify-between max-w-xs"><span>Product announcements</span><input type="checkbox" class="switch" checked /></label>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- Cards / stats -->
+  <section>
+    <h2 class="text-lg font-semibold mb-1">Cards &amp; stat tiles</h2>
+    <p class="text-sm text-muted-foreground mb-5">Dashboard building blocks.</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card"><div class="card-content pt-5">
+        <div class="flex items-center justify-between"><p class="text-xs text-muted-foreground">MRR</p><i data-lucide="trending-up" class="w-4 h-4 text-success"></i></div>
+        <p class="text-2xl font-bold mt-1">$84,210</p>
+        <p class="text-xs text-success mt-1">+12.4% vs last month</p>
+      </div></div>
+      <div class="card"><div class="card-content pt-5">
+        <div class="flex items-center justify-between"><p class="text-xs text-muted-foreground">Active tenants</p><i data-lucide="building-2" class="w-4 h-4 text-muted-foreground"></i></div>
+        <p class="text-2xl font-bold mt-1">1,248</p>
+        <p class="text-xs text-muted-foreground mt-1">36 added this week</p>
+      </div></div>
+      <div class="card"><div class="card-content pt-5">
+        <div class="flex items-center justify-between"><p class="text-xs text-muted-foreground">Open tickets</p><i data-lucide="life-buoy" class="w-4 h-4 text-warning"></i></div>
+        <p class="text-2xl font-bold mt-1">27</p>
+        <p class="text-xs text-muted-foreground mt-1">4 breaching SLA</p>
+      </div></div>
+      <div class="card"><div class="card-content pt-5">
+        <div class="flex items-center justify-between"><p class="text-xs text-muted-foreground">Storage used</p><i data-lucide="database" class="w-4 h-4 text-muted-foreground"></i></div>
+        <p class="text-2xl font-bold mt-1">68%</p>
+        <div class="progress-track mt-2"><div class="progress-fill" style="width:68%"></div></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- Feedback: alerts, toasts, skeletons -->
+  <section id="feedback" class="scroll-mt-20">
+    <h2 class="text-lg font-semibold mb-1">Feedback</h2>
+    <p class="text-sm text-muted-foreground mb-5">Alerts, toasts, skeleton loaders, empty states.</p>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="space-y-3">
+        <div class="alert alert-warning"><i data-lucide="alert-triangle"></i><div><p class="alert-title">Trial ends in 3 days</p><p>Add a payment method to avoid workspace suspension.</p></div></div>
+        <div class="alert alert-destructive"><i data-lucide="octagon-alert"></i><div><p class="alert-title">Payment failed</p><p>We couldn't charge the card ending in 4242.</p></div></div>
+        <div class="alert alert-success"><i data-lucide="check-circle-2"></i><div><p class="alert-title">Domain verified</p><p>app.acme.com is now pointing to your workspace.</p></div></div>
+        <div class="flex gap-2 pt-1">
+          <button class="btn btn-outline btn-sm" onclick="showToast({title:'Saved',description:'Your changes have been saved.',variant:'success'})">Trigger success toast</button>
+          <button class="btn btn-outline btn-sm" onclick="showToast({title:'Something went wrong',description:'Could not update the record.',variant:'destructive'})">Trigger error toast</button>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="card"><div class="card-content pt-5 space-y-2.5">
+          <div class="skeleton h-4 w-2/3"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-5/6"></div>
+        </div></div>
+        <div class="card"><div class="empty-state">
+          <i data-lucide="inbox"></i><h3>No results found</h3><p>Try adjusting your filters, or invite your first member to get started.</p>
+          <button class="btn btn-primary btn-sm mt-4"><i data-lucide="plus"></i> Invite member</button>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overlays -->
+  <section id="overlays" class="scroll-mt-20">
+    <h2 class="text-lg font-semibold mb-1">Overlays</h2>
+    <p class="text-sm text-muted-foreground mb-5">Dropdown menus, popovers, tooltips, dialogs, sheets — all reparent to &lt;body&gt; on open so they never get clipped.</p>
+    <div class="card"><div class="card-content pt-5 flex flex-wrap items-center gap-2.5">
+
+      <button class="btn btn-outline btn-sm" data-dropdown-trigger="demo-dd">Dropdown menu <i data-lucide="chevron-down"></i></button>
+      <div class="overlay-panel dropdown-menu hidden" data-dropdown="demo-dd">
+        <div class="dropdown-label">Actions</div>
+        <button class="dropdown-item"><i data-lucide="eye"></i> View details</button>
+        <button class="dropdown-item"><i data-lucide="pencil"></i> Edit</button>
+        <button class="dropdown-item"><i data-lucide="copy"></i> Duplicate</button>
+        <div class="dropdown-sep"></div>
+        <button class="dropdown-item danger"><i data-lucide="trash-2"></i> Delete</button>
+      </div>
+
+      <button class="btn btn-outline btn-sm" data-popover-trigger="demo-pop">Popover <i data-lucide="info"></i></button>
+      <div class="overlay-panel popover-panel hidden w-72" data-popover="demo-pop">
+        <p class="text-sm font-semibold mb-1">Usage-based billing</p>
+        <p class="text-xs text-muted-foreground">Charges are calculated daily and settled at the end of the billing cycle.</p>
+      </div>
+
+      <button class="btn btn-outline btn-sm" data-tooltip="Copies the API key to your clipboard">Hover for tooltip</button>
+
+      <button class="btn btn-outline btn-sm" data-dialog-trigger="demo-dialog">Open dialog</button>
+      <button class="btn btn-outline btn-sm" data-sheet-trigger="demo-sheet">Open sheet</button>
+    </div></div>
+  </section>
+
+  <!-- Tabs -->
+  <section>
+    <h2 class="text-lg font-semibold mb-1">Tabs</h2>
+    <div class="card"><div class="card-content pt-5">
+      <div class="tabs-list" data-tabs>
+        <button class="tabs-trigger active" data-tab-trigger="overview">Overview</button>
+        <button class="tabs-trigger" data-tab-trigger="usage">Usage</button>
+        <button class="tabs-trigger" data-tab-trigger="billing">Billing</button>
+      </div>
+      <div class="pt-4 text-sm text-muted-foreground" data-tabs>
+        <div data-tab-panel="overview">Overview panel content — plan summary, seat count, renewal date.</div>
+        <div data-tab-panel="usage" class="hidden">Usage panel content — API calls, storage, seats consumed this cycle.</div>
+        <div data-tab-panel="billing" class="hidden">Billing panel content — invoices, payment method, tax details.</div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- Data table -->
+  <section id="table" class="scroll-mt-20">
+    <h2 class="text-lg font-semibold mb-1">Data table</h2>
+    <p class="text-sm text-muted-foreground mb-5">One reusable engine (<code class="kbd">shared/js/data-table.js</code>) powers every table in the product: search, per-column filters, sorting, column visibility, row selection + bulk actions, row actions, pagination.</p>
+    <div id="demo-table"></div>
+  </section>
+
+  <!-- Navigation pattern -->
+  <section id="nav" class="scroll-mt-20">
+    <h2 class="text-lg font-semibold mb-1">Sidebar navigation pattern</h2>
+    <p class="text-sm text-muted-foreground mb-5">Used verbatim in the admin and tenant shells.</p>
+    <div class="card overflow-hidden max-w-xs">
+      <div class="bg-sidebar p-3 space-y-0.5">
+        <p class="nav-group-label">Platform</p>
+        <a class="nav-link active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+        <a class="nav-link"><i data-lucide="building-2"></i> Tenants</a>
+        <a class="nav-link"><i data-lucide="users"></i> Users</a>
+        <a class="nav-link"><i data-lucide="shield"></i> Roles &amp; permissions</a>
+        <p class="nav-group-label">Monetization</p>
+        <a class="nav-link"><i data-lucide="credit-card"></i> Plans &amp; subscriptions</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="pt-8 pb-16 border-t border-border text-xs text-muted-foreground">
+    Static HTML/CSS/JS prototype · shadcn/ui "Zinc" token set · Tailwind CDN · Lucide icons
+  </footer>
+</main>
+
+<!-- Dialog -->
+<div class="dialog-root hidden fixed inset-0" data-dialog="demo-dialog">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Invite a member</p><p class="card-description">They'll receive an email invite to join this workspace.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Email address</label><input class="input" placeholder="teammate@company.com" /></div>
+      <div><label class="field-label">Role</label><select class="select"><option>Member</option><option>Admin</option><option>Billing manager</option></select></div>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Invite sent',variant:'success'})">Send invite</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet -->
+<div class="sheet-root hidden fixed inset-0" data-sheet="demo-sheet">
+  <div class="sheet-overlay"></div>
+  <div class="sheet-panel fixed right-0 top-0 h-full w-[26rem] max-w-[calc(100vw-2rem)] overflow-y-auto scroll-thin">
+    <div class="card-header flex items-start justify-between sticky top-0 bg-background">
+      <div><p class="card-title">Record details</p><p class="card-description">Full attributes for this row.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-sheet-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-4">
+      <div><p class="field-label">Status</p><span class="badge badge-success">Active</span></div>
+      <div><p class="field-label">Created</p><p class="text-sm">Jan 12, 2026</p></div>
+      <div><p class="field-label">Notes</p><p class="text-sm text-muted-foreground">Sheets slide in from the right — used for row detail / quick-edit panels throughout the admin and tenant apps.</p></div>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script>
+  lucide.createIcons();
+
+  const demoData = [
+    { id: 1, name: "Acme Inc.", email: "ops@acme.com", plan: "Enterprise", status: "active", mrr: 1240, created: "2025-02-11" },
+    { id: 2, name: "Northwind Co.", email: "hello@northwind.io", plan: "Growth", status: "trialing", mrr: 0, created: "2026-06-02" },
+    { id: 3, name: "Globex", email: "it@globex.com", plan: "Scale", status: "active", mrr: 640, created: "2024-11-28" },
+    { id: 4, name: "Initech", email: "billing@initech.com", plan: "Starter", status: "suspended", mrr: 0, created: "2025-08-19" },
+    { id: 5, name: "Umbrella Labs", email: "team@umbrella.io", plan: "Enterprise", status: "active", mrr: 2100, created: "2023-05-04" },
+    { id: 6, name: "Wayne Digital", email: "ops@waynedigital.com", plan: "Growth", status: "active", mrr: 320, created: "2025-01-30" },
+    { id: 7, name: "Stark Cloud", email: "hi@starkcloud.dev", plan: "Scale", status: "past_due", mrr: 880, created: "2024-09-14" },
+    { id: 8, name: "Hooli", email: "team@hooli.com", plan: "Starter", status: "active", mrr: 49, created: "2026-03-21" },
+    { id: 9, name: "Soylent Corp", email: "ops@soylent.io", plan: "Growth", status: "active", mrr: 410, created: "2025-10-02" },
+    { id: 10, name: "Pied Piper", email: "founders@piedpiper.io", plan: "Starter", status: "trialing", mrr: 0, created: "2026-07-15" },
+    { id: 11, name: "Massive Dynamic", email: "it@massivedynamic.com", plan: "Enterprise", status: "active", mrr: 3400, created: "2022-12-01" },
+    { id: 12, name: "Aviato", email: "hi@aviato.io", plan: "Starter", status: "suspended", mrr: 0, created: "2025-04-08" },
+  ];
+
+  const statusBadge = (s) => ({
+    active: '<span class="badge badge-success"><span class="dot" style="background:hsl(var(--success))"></span>Active</span>',
+    trialing: '<span class="badge badge-warning"><span class="dot" style="background:hsl(var(--warning))"></span>Trialing</span>',
+    suspended: '<span class="badge badge-destructive"><span class="dot" style="background:hsl(var(--destructive))"></span>Suspended</span>',
+    past_due: '<span class="badge badge-destructive"><span class="dot" style="background:hsl(var(--destructive))"></span>Past due</span>',
+  }[s] || s);
+
+  new DataTable("#demo-table", {
+    columns: [
+      { key: "name", label: "Tenant", sortable: true, render: (r) => `
+        <div class="flex items-center gap-2.5">
+          <div class="avatar w-7 h-7">${r.name.slice(0,2).toUpperCase()}</div>
+          <div><p class="font-medium text-foreground leading-tight">${r.name}</p><p class="text-xs text-muted-foreground">${r.email}</p></div>
+        </div>` },
+      { key: "plan", label: "Plan", sortable: true, filterable: true, filterOptions: [
+        { value: "Starter", label: "Starter" }, { value: "Growth", label: "Growth" }, { value: "Scale", label: "Scale" }, { value: "Enterprise", label: "Enterprise" },
+      ], render: (r) => `<span class="badge badge-outline">${r.plan}</span>` },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [
+        { value: "active", label: "Active" }, { value: "trialing", label: "Trialing" }, { value: "past_due", label: "Past due" }, { value: "suspended", label: "Suspended" },
+      ], render: (r) => statusBadge(r.status) },
+      { key: "mrr", label: "MRR", sortable: true, className: "text-right font-mono", headerClassName: "text-right", render: (r) => `$${r.mrr.toLocaleString()}` },
+      { key: "created", label: "Created", sortable: true, searchable: false },
+    ],
+    data: demoData,
+    pageSize: 6,
+    toolbarActionsHtml: `<button class="btn btn-primary btn-sm"><i data-lucide="plus"></i> Add tenant</button>`,
+    rowActions: [
+      { label: "View details", icon: "eye", onClick: (row) => showToast({ title: row.name, description: "Opened tenant detail view.", }) },
+      { label: "Edit", icon: "pencil", onClick: (row) => showToast({ title: "Edit " + row.name }) },
+      { type: "separator" },
+      { label: "Suspend", icon: "ban", danger: true, onClick: (row) => showToast({ title: "Suspended " + row.name, variant: "destructive" }) },
+    ],
+    bulkActions: [
+      { label: "Export selected", icon: "download", onClick: (rows) => showToast({ title: `Exporting ${rows.length} tenants` }) },
+      { label: "Suspend", icon: "ban", danger: true, onClick: (rows) => showToast({ title: `Suspended ${rows.length} tenants`, variant: "destructive" }) },
+    ],
+  });
+</script>
+</body>
+</html>
