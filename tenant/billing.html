@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Billing & Subscription — Acme Inc. Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/tenant.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="billing">
+<div class="shell">
+  <aside id="tenant-sidebar"></aside>
+  <div class="shell-main">
+    <header id="tenant-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid lg:grid-cols-3 gap-4">
+        <div class="card">
+          <div class="card-header"><p class="card-title">Current plan</p></div>
+          <div class="card-content">
+            <div class="flex items-center gap-2"><p class="text-xl font-bold">Enterprise</p><span class="badge badge-success">Active</span></div>
+            <p class="text-sm text-muted-foreground mt-1">$1,240.00/month · renews Sep 1, 2026</p>
+            <button class="btn btn-outline btn-sm mt-4 w-full" data-dialog-trigger="change-plan">Change plan</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><p class="card-title">Payment method</p></div>
+          <div class="card-content">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-7 rounded bg-muted grid place-items-center"><i data-lucide="credit-card" class="w-4 h-4"></i></div>
+              <div><p class="text-sm font-medium">Visa ending in 4242</p><p class="text-xs text-muted-foreground">Expires 08/28</p></div>
+            </div>
+            <button class="btn btn-outline btn-sm mt-4 w-full">Update payment method</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><p class="card-title">Billing contact</p></div>
+          <div class="card-content">
+            <p class="text-sm font-medium">Tom Reyes</p>
+            <p class="text-xs text-muted-foreground">billing@acme.com</p>
+            <button class="btn btn-outline btn-sm mt-4 w-full">Edit billing details</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header"><p class="card-title">Plan usage</p></div>
+        <div class="card-content grid sm:grid-cols-3 gap-6">
+          <div><p class="text-xs text-muted-foreground mb-1.5">Seats</p><p class="text-sm font-medium mb-1.5">128 / 250</p><div class="progress-track"><div class="progress-fill" style="width:51%"></div></div></div>
+          <div><p class="text-xs text-muted-foreground mb-1.5">Storage</p><p class="text-sm font-medium mb-1.5">64 GB / 100 GB</p><div class="progress-track"><div class="progress-fill" style="width:64%"></div></div></div>
+          <div><p class="text-xs text-muted-foreground mb-1.5">API calls (this cycle)</p><p class="text-sm font-medium mb-1.5">842K / 2M</p><div class="progress-track"><div class="progress-fill" style="width:42%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header"><p class="card-title">Active add-ons</p></div>
+        <div class="card-content" style="padding-top:0">
+          <table class="dtable">
+            <thead><tr><th>Add-on</th><th>Price</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>Extra storage (100GB)</td><td class="font-mono">$19/mo</td><td class="text-right"><button class="btn btn-ghost btn-sm" style="color:hsl(var(--destructive))">Remove</button></td></tr>
+              <tr><td>Priority support SLA</td><td class="font-mono">$149/mo</td><td class="text-right"><button class="btn btn-ghost btn-sm" style="color:hsl(var(--destructive))">Remove</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer"><button class="btn btn-outline btn-sm"><i data-lucide="plus"></i> Browse add-ons</button></div>
+      </div>
+
+      <p class="card-title mb-3 mt-6 text-base">Invoice history</p>
+      <div id="invoices-table"></div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="change-plan">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Change plan</p><p class="card-description">Changes are prorated for the current billing cycle.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content grid sm:grid-cols-3 gap-3">
+      <label class="card p-3 cursor-pointer"><input type="radio" name="plan" class="radio mb-2"/><p class="text-sm font-semibold">Growth</p><p class="text-xs text-muted-foreground">$99/mo</p></label>
+      <label class="card p-3 cursor-pointer"><input type="radio" name="plan" class="radio mb-2"/><p class="text-sm font-semibold">Scale</p><p class="text-xs text-muted-foreground">$299/mo</p></label>
+      <label class="card p-3 cursor-pointer border-foreground" style="border-width:2px"><input type="radio" name="plan" class="radio mb-2" checked/><p class="text-sm font-semibold">Enterprise</p><p class="text-xs text-muted-foreground">Current plan</p></label>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Plan updated',variant:'success'})">Confirm change</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({ title: "Billing & Subscription", description: "Manage your plan, payment method, and invoices." });
+
+  const INVOICES = [
+    { id: "INV-2208", amount: 1240, status: "paid", date: "2026-08-01" },
+    { id: "INV-2195", amount: 1240, status: "paid", date: "2026-07-01" },
+    { id: "INV-2182", amount: 1240, status: "paid", date: "2026-06-01" },
+    { id: "INV-2170", amount: 1099, status: "paid", date: "2026-05-01" },
+    { id: "INV-2158", amount: 1099, status: "failed", date: "2026-04-01" },
+    { id: "INV-2146", amount: 1099, status: "paid", date: "2026-03-01" },
+  ];
+  const invStatus = (s) => s === "paid" ? '<span class="badge badge-success">Paid</span>' : '<span class="badge badge-destructive">Failed</span>';
+
+  new DataTable("#invoices-table", {
+    columns: [
+      { key: "id", label: "Invoice", sortable: true, render: r => `<span class="font-mono text-xs">${r.id}</span>` },
+      { key: "amount", label: "Amount", sortable: true, className: "font-mono", render: r => `$${r.amount.toLocaleString()}.00` },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [{value:"paid",label:"Paid"},{value:"failed",label:"Failed"}], render: r => invStatus(r.status) },
+      { key: "date", label: "Date", sortable: true },
+    ],
+    getRowId: r => r.id, data: INVOICES, pageSize: 10,
+    rowActions: [
+      { label: "Download PDF", icon: "download", onClick: (row) => showToast({ title: "Downloading " + row.id }) },
+      { label: "View details", icon: "eye", onClick: (row) => showToast({ title: "Details — " + row.id }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

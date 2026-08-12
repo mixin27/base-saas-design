@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Roles & Permissions — Acme Inc. Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/tenant.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="roles">
+<div class="shell">
+  <aside id="tenant-sidebar"></aside>
+  <div class="shell-main">
+    <header id="tenant-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="alert mb-4"><i data-lucide="info"></i><div><p class="alert-title">Scoped to this workspace</p><p class="text-muted-foreground">These roles only apply inside Acme Inc. — the same dynamic permission engine used platform-wide.</p></div></div>
+
+      <div class="grid lg:grid-cols-[280px_1fr] gap-4 items-start">
+        <div class="card">
+          <div class="card-header flex items-center justify-between">
+            <p class="card-title">Roles</p>
+            <button class="btn btn-primary btn-icon-sm" data-dialog-trigger="create-role" data-tooltip="Create custom role"><i data-lucide="plus"></i></button>
+          </div>
+          <div class="card-content" style="padding-top:0">
+            <div id="roles-list" class="space-y-1"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2"><p class="card-title" id="role-name">Admin</p><span class="badge badge-outline" id="role-system-badge">System role</span></div>
+              <p class="card-description" id="role-desc">Full access to workspace management, excluding billing.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-muted-foreground" id="role-user-count">2 members</span>
+              <button class="btn btn-outline btn-sm"><i data-lucide="copy"></i> Duplicate</button>
+              <button class="btn btn-outline btn-sm" id="role-delete-btn" style="color:hsl(var(--destructive));border-color:hsl(var(--destructive)/.4)"><i data-lucide="trash-2"></i> Delete</button>
+            </div>
+          </div>
+          <div class="card-content" style="padding-top:0">
+            <div class="flex items-center justify-between py-3 border-b border-border">
+              <p class="text-xs text-muted-foreground">Toggle individual permissions, or grant/revoke a whole resource.</p>
+              <div class="flex items-center gap-2">
+                <button class="btn btn-outline btn-sm" id="grant-all-btn"><i data-lucide="check-check"></i> Grant all</button>
+                <button class="btn btn-outline btn-sm" id="revoke-all-btn"><i data-lucide="x"></i> Revoke all</button>
+              </div>
+            </div>
+            <div id="permission-matrix" class="divide-y divide-border"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="create-role">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Create custom role</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Role name</label><input class="input" placeholder="e.g. Contractor" /></div>
+      <div><label class="field-label">Description</label><textarea class="textarea"></textarea></div>
+      <div><label class="field-label">Start from</label><select class="select"><option>Blank</option><option>Clone: Admin</option><option>Clone: Member</option></select></div>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Role created',variant:'success'})">Create role</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({ title: "Roles & Permissions", description: "Build custom roles from granular permissions for this workspace." });
+
+  const RESOURCES = [
+    { key: "members", label: "Members", icon: "users", actions: ["view", "invite", "edit_role", "remove"] },
+    { key: "billing", label: "Billing & subscription", icon: "credit-card", actions: ["view", "manage", "download_invoices"] },
+    { key: "api", label: "API access", icon: "plug-zap", actions: ["view", "create_token", "revoke_token"] },
+    { key: "announcements", label: "Announcements", icon: "megaphone", actions: ["view", "create"] },
+    { key: "settings", label: "Workspace settings", icon: "settings", actions: ["view", "edit"] },
+    { key: "roles", label: "Roles & permissions", icon: "shield", actions: ["view", "manage"] },
+  ];
+  const ROLES = [
+    { id: "owner", name: "Owner", description: "Full control, including billing and deleting the workspace.", system: true, users: 1 },
+    { id: "admin", name: "Admin", description: "Full access to workspace management, excluding billing.", system: true, users: 2 },
+    { id: "billing-manager", name: "Billing Manager", description: "Manage billing, subscriptions, and view invoices.", system: true, users: 1 },
+    { id: "member", name: "Member", description: "Standard access to the product, no admin capabilities.", system: true, users: 118 },
+    { id: "read-only", name: "Read-only", description: "View-only access, for auditors and stakeholders.", system: true, users: 6 },
+  ];
+  function allPerms(v) { const o = {}; RESOURCES.forEach(r => r.actions.forEach(a => o[`${r.key}.${a}`] = v)); return o; }
+  const ROLE_PERMS = {
+    owner: allPerms(true),
+    admin: Object.assign(allPerms(true), { "billing.manage": false, "billing.view": true }),
+    "billing-manager": Object.assign(allPerms(false), { "billing.view": true, "billing.manage": true, "billing.download_invoices": true, "members.view": true }),
+    member: Object.assign(allPerms(false), { "members.view": true, "announcements.view": true }),
+    "read-only": (() => { const o = allPerms(false); RESOURCES.forEach(r => o[`${r.key}.view`] = true); return o; })(),
+  };
+  let activeRole = "admin";
+  function actionLabel(a) { return a.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()); }
+
+  function renderRolesList() {
+    document.getElementById("roles-list").innerHTML = ROLES.map(r => `
+      <button class="w-full text-left px-2.5 py-2 rounded-md ${activeRole === r.id ? "bg-accent" : "hover:bg-accent/60"}" data-role-select="${r.id}">
+        <p class="text-sm font-medium">${r.name}</p><p class="text-xs text-muted-foreground mt-0.5">${r.users} members</p>
+      </button>`).join("");
+    document.querySelectorAll("[data-role-select]").forEach(btn => btn.addEventListener("click", () => { activeRole = btn.getAttribute("data-role-select"); renderRolesList(); renderMatrix(); }));
+  }
+  function renderMatrix() {
+    const role = ROLES.find(r => r.id === activeRole);
+    const perms = ROLE_PERMS[activeRole];
+    document.getElementById("role-name").textContent = role.name;
+    document.getElementById("role-desc").textContent = role.description;
+    document.getElementById("role-user-count").textContent = `${role.users} members`;
+    document.getElementById("permission-matrix").innerHTML = RESOURCES.map(res => {
+      const allOn = res.actions.every(a => perms[`${res.key}.${a}`]);
+      return `<div class="py-3.5">
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center gap-2"><i data-lucide="${res.icon}" class="w-4 h-4 text-muted-foreground"></i><p class="text-sm font-medium">${res.label}</p></div>
+          <label class="flex items-center gap-2 text-xs text-muted-foreground"><input type="checkbox" class="switch" data-resource-toggle="${res.key}" ${allOn?"checked":""}/> All</label>
+        </div>
+        <div class="flex flex-wrap gap-x-6 gap-y-2 pl-6">
+          ${res.actions.map(a => `<label class="flex items-center gap-2 text-sm"><input type="checkbox" class="checkbox" data-perm="${res.key}.${a}" ${perms[`${res.key}.${a}`]?"checked":""} ${role.id==="owner"?"disabled":""}/> ${actionLabel(a)}</label>`).join("")}
+        </div></div>`;
+    }).join("");
+    document.querySelectorAll("[data-perm]").forEach(cb => cb.addEventListener("change", e => { perms[e.target.getAttribute("data-perm")] = e.target.checked; renderMatrix(); }));
+    document.querySelectorAll("[data-resource-toggle]").forEach(cb => cb.addEventListener("change", e => { const key = e.target.getAttribute("data-resource-toggle"); RESOURCES.find(r=>r.key===key).actions.forEach(a => perms[`${key}.${a}`] = e.target.checked); renderMatrix(); }));
+    lucide.createIcons();
+  }
+  document.getElementById("grant-all-btn").addEventListener("click", () => { ROLE_PERMS[activeRole] = allPerms(true); renderMatrix(); });
+  document.getElementById("revoke-all-btn").addEventListener("click", () => { ROLE_PERMS[activeRole] = allPerms(false); renderMatrix(); });
+  renderRolesList(); renderMatrix(); lucide.createIcons();
+</script>
+</body>
+</html>

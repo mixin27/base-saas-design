@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Members — Acme Inc. Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/tenant.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="members">
+<div class="shell">
+  <aside id="tenant-sidebar"></aside>
+  <div class="shell-main">
+    <header id="tenant-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+      <div id="members-table"></div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="invite-member">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Invite a member</p><p class="card-description">They'll receive an email invite to join Acme Inc.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Email addresses</label><textarea class="textarea" placeholder="teammate@company.com, another@company.com"></textarea><p class="field-hint">Separate multiple emails with a comma.</p></div>
+      <div><label class="field-label">Role</label><select class="select"><option>Member</option><option>Admin</option><option>Billing Manager</option><option>Read-only</option></select></div>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Invites sent',variant:'success'})">Send invites</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Members",
+    description: "128 people have access to this workspace.",
+    actionsHtml: `<button class="btn btn-primary btn-sm" data-dialog-trigger="invite-member"><i data-lucide="user-plus"></i> Invite member</button>`,
+  });
+
+  const MEMBERS = [
+    { id: 1, name: "Jordan Mensah", email: "jordan@acme.com", role: "Owner", status: "active", joined: "2025-02-11" },
+    { id: 2, name: "Grace Idowu", email: "grace@acme.com", role: "Admin", status: "active", joined: "2025-03-02" },
+    { id: 3, name: "Tom Reyes", email: "tom@acme.com", role: "Billing Manager", status: "active", joined: "2025-04-19" },
+    { id: 4, name: "Elena Popov", email: "elena@acme.com", role: "Member", status: "active", joined: "2025-06-14" },
+    { id: 5, name: "Ravi Shah", email: "ravi@acme.com", role: "Member", status: "invited", joined: "2026-08-10" },
+    { id: 6, name: "Priya Nair", email: "priya@acme.com", role: "Read-only", status: "active", joined: "2025-09-08" },
+    { id: 7, name: "Leo Fischer", email: "leo@acme.com", role: "Member", status: "suspended", joined: "2025-11-22" },
+    { id: 8, name: "Amara Reyes", email: "amara@acme.com", role: "Admin", status: "active", joined: "2025-05-30" },
+  ];
+
+  const mStatus = (s) => ({
+    active: '<span class="badge badge-success">Active</span>',
+    invited: '<span class="badge badge-warning">Invited</span>',
+    suspended: '<span class="badge badge-destructive">Suspended</span>',
+  }[s]);
+
+  new DataTable("#members-table", {
+    columns: [
+      { key: "name", label: "Member", sortable: true, render: (r) => `
+        <div class="flex items-center gap-2.5">
+          <div class="avatar w-7 h-7">${r.name.split(" ").map(n=>n[0]).join("")}</div>
+          <div><p class="font-medium text-foreground leading-tight">${r.name}</p><p class="text-xs text-muted-foreground">${r.email}</p></div>
+        </div>` },
+      { key: "role", label: "Role", sortable: true, filterable: true, filterOptions: [
+        { value: "Owner", label: "Owner" }, { value: "Admin", label: "Admin" }, { value: "Billing Manager", label: "Billing Manager" }, { value: "Member", label: "Member" }, { value: "Read-only", label: "Read-only" },
+      ], render: (r) => `<span class="badge badge-outline">${r.role}</span>` },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [
+        { value: "active", label: "Active" }, { value: "invited", label: "Invited" }, { value: "suspended", label: "Suspended" },
+      ], render: (r) => mStatus(r.status) },
+      { key: "joined", label: "Joined", sortable: true, searchable: false },
+    ],
+    data: MEMBERS,
+    pageSize: 10,
+    rowActions: [
+      { label: "Change role", icon: "shield", onClick: (row) => showToast({ title: "Change role for " + row.name }) },
+      { label: "Resend invite", icon: "mail", onClick: (row) => showToast({ title: "Invite resent to " + row.email }) },
+      { type: "separator" },
+      { label: "Suspend", icon: "ban", danger: true, onClick: (row) => showToast({ title: "Suspended " + row.name, variant: "destructive" }) },
+      { label: "Remove from workspace", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Removed " + row.name, variant: "destructive" }) },
+    ],
+    bulkActions: [
+      { label: "Change role", icon: "shield", onClick: (rows) => showToast({ title: `Updating role for ${rows.length} members` }) },
+      { label: "Remove", icon: "trash-2", danger: true, onClick: (rows) => showToast({ title: `Removed ${rows.length} members`, variant: "destructive" }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

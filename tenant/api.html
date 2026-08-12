@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>API Access — Acme Inc. Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/tenant.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="api">
+<div class="shell">
+  <aside id="tenant-sidebar"></aside>
+  <div class="shell-main">
+    <header id="tenant-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="tabs-list mb-4" data-tabs>
+        <button class="tabs-trigger active" data-tab-trigger="tokens">Access tokens</button>
+        <button class="tabs-trigger" data-tab-trigger="apps">Apps</button>
+        <button class="tabs-trigger" data-tab-trigger="webhooks">Webhooks</button>
+      </div>
+
+      <div data-tabs>
+        <div data-tab-panel="tokens">
+          <div class="flex justify-end mb-3"><button class="btn btn-primary btn-sm" data-dialog-trigger="create-token"><i data-lucide="plus"></i> Create token</button></div>
+          <div id="tokens-table"></div>
+        </div>
+
+        <div data-tab-panel="apps" class="hidden">
+          <div class="flex justify-end mb-3"><button class="btn btn-primary btn-sm" data-dialog-trigger="register-app"><i data-lucide="plus"></i> Register app</button></div>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="card p-5">
+              <div class="flex items-center justify-between"><div class="feature-icon" style="width:2.2rem;height:2.2rem"><i data-lucide="workflow" style="width:16px;height:16px"></i></div><span class="badge badge-success">Active</span></div>
+              <p class="font-semibold mt-3">Internal reporting sync</p>
+              <p class="text-xs text-muted-foreground mt-1">Reads members &amp; billing data nightly.</p>
+              <p class="text-xs text-muted-foreground mt-3 font-mono">Client ID: app_82Fk...q1</p>
+            </div>
+            <div class="card p-5">
+              <div class="flex items-center justify-between"><div class="feature-icon" style="width:2.2rem;height:2.2rem"><i data-lucide="terminal" style="width:16px;height:16px"></i></div><span class="badge badge-success">Active</span></div>
+              <p class="font-semibold mt-3">CI/CD pipeline</p>
+              <p class="text-xs text-muted-foreground mt-1">Deploys trigger workspace cache invalidation.</p>
+              <p class="text-xs text-muted-foreground mt-3 font-mono">Client ID: app_19Bx...m4</p>
+            </div>
+            <div class="card p-5 border-dashed flex flex-col items-center justify-center text-center py-8" data-dialog-trigger="register-app" style="cursor:pointer">
+              <i data-lucide="plus-circle" class="w-6 h-6 text-muted-foreground"></i>
+              <p class="text-sm font-medium mt-2">Register a new app</p>
+            </div>
+          </div>
+        </div>
+
+        <div data-tab-panel="webhooks" class="hidden">
+          <div class="card">
+            <div class="card-header"><p class="card-title">Outbound webhook</p><p class="card-description">Sent when events happen in your workspace.</p></div>
+            <div class="card-content space-y-3">
+              <div><label class="field-label">Endpoint URL</label><input class="input font-mono" value="https://api.acme.com/hooks/nimbus" /></div>
+              <div><label class="field-label">Signing secret</label><input class="input font-mono" value="whsec_9d2f••••••••" /></div>
+              <div>
+                <label class="field-label">Subscribed events</label>
+                <div class="flex flex-wrap gap-2">
+                  <span class="badge badge-outline">member.invited</span><span class="badge badge-outline">member.removed</span><span class="badge badge-outline">role.updated</span><span class="badge badge-outline">invoice.paid</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer flex justify-end gap-2">
+              <button class="btn btn-outline btn-sm">Send test event</button>
+              <button class="btn btn-primary btn-sm" onclick="showToast({title:'Webhook saved',variant:'success'})">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="create-token">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Create access token</p><p class="card-description">Scoped to this workspace only.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Token name</label><input class="input" placeholder="e.g. Reporting script" /></div>
+      <div><label class="field-label">Scopes</label>
+        <div class="space-y-1.5 text-sm mt-1">
+          <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" checked/> Read members</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="checkbox"/> Write members</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" checked/> Read billing</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="checkbox"/> Manage webhooks</label>
+        </div>
+      </div>
+      <div><label class="field-label">Expiration</label><select class="select"><option>Never</option><option>30 days</option><option>90 days</option></select></div>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Token created',description:'Copy it now — it will not be shown again.',variant:'success'})">Generate token</button>
+    </div>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="register-app">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Register an app</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">App name</label><input class="input" placeholder="e.g. Internal reporting sync" /></div>
+      <div><label class="field-label">Redirect URL (OAuth)</label><input class="input font-mono" placeholder="https://yourapp.com/oauth/callback" /></div>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'App registered',variant:'success'})">Register</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({ title: "API Access", description: "Apps, access tokens, and webhooks for integrating with Acme Inc." });
+
+  const TOKENS = [
+    { id: 1, name: "CI/CD pipeline", scopes: "read:members, read:billing", created: "2026-08-05", lastUsed: "2 hours ago" },
+    { id: 2, name: "Reporting script", scopes: "read:members", created: "2026-06-14", lastUsed: "1 day ago" },
+    { id: 3, name: "Legacy integration", scopes: "read:members, write:members", created: "2025-11-02", lastUsed: "3 weeks ago" },
+  ];
+  new DataTable("#tokens-table", {
+    columns: [
+      { key: "name", label: "Token", sortable: true, render: r => `<div><p class="font-medium">${r.name}</p><p class="text-xs text-muted-foreground font-mono mt-0.5">sk_live_••••••••••</p></div>` },
+      { key: "scopes", label: "Scopes", sortable: false, render: r => r.scopes.split(", ").map(s => `<span class="badge badge-outline mr-1">${s}</span>`).join("") },
+      { key: "created", label: "Created", sortable: true },
+      { key: "lastUsed", label: "Last used", sortable: false },
+    ],
+    data: TOKENS, pageSize: 10,
+    rowActions: [
+      { label: "Rename", icon: "pencil", onClick: (row) => showToast({ title: "Rename " + row.name }) },
+      { type: "separator" },
+      { label: "Revoke", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Revoked " + row.name, variant: "destructive" }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

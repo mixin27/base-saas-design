@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Workspace Settings — Acme Inc.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/tenant.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="settings">
+<div class="shell">
+  <aside id="tenant-sidebar"></aside>
+  <div class="shell-main">
+    <header id="tenant-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid lg:grid-cols-[220px_1fr] gap-6 items-start">
+        <nav class="space-y-0.5" data-tabs>
+          <button class="nav-link w-full text-left active" data-tab-trigger="general" style="justify-content:flex-start"><i data-lucide="settings"></i> General</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="branding" style="justify-content:flex-start"><i data-lucide="palette"></i> Branding</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="members-defaults" style="justify-content:flex-start"><i data-lucide="users"></i> Member defaults</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="security" style="justify-content:flex-start"><i data-lucide="lock"></i> Security</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="domain" style="justify-content:flex-start"><i data-lucide="globe"></i> Custom domain</button>
+          <button class="nav-link w-full text-left" style="justify-content:flex-start;color:hsl(var(--destructive))" data-tab-trigger="danger"><i data-lucide="triangle-alert"></i> Danger zone</button>
+        </nav>
+
+        <div data-tabs class="max-w-2xl">
+          <div data-tab-panel="general" class="space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">Workspace details</p></div>
+              <div class="card-content space-y-3">
+                <div><label class="field-label">Workspace name</label><input class="input" value="Acme Inc." /></div>
+                <div><label class="field-label">Workspace URL</label><div class="flex items-center"><span class="text-sm text-muted-foreground bg-muted border border-r-0 border-border rounded-l-md px-3 h-9 flex items-center">nimbus.io/</span><input class="input rounded-l-none" value="acme" /></div></div>
+                <div><label class="field-label">Default timezone</label><select class="select"><option>America/New_York</option><option>UTC</option><option>America/Los_Angeles</option></select></div>
+              </div>
+              <div class="card-footer flex justify-end"><button class="btn btn-primary btn-sm" onclick="showToast({title:'Settings saved',variant:'success'})">Save changes</button></div>
+            </div>
+          </div>
+
+          <div data-tab-panel="branding" class="hidden space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">Workspace branding</p></div>
+              <div class="card-content space-y-3">
+                <div class="flex items-center gap-3"><div class="workspace-logo" style="width:48px;height:48px;font-size:1rem">AC</div><button class="btn btn-outline btn-sm">Upload logo</button></div>
+                <label class="flex items-center justify-between text-sm"><span>Use custom accent color in the sidebar</span><input type="checkbox" class="switch"/></label>
+              </div>
+            </div>
+          </div>
+
+          <div data-tab-panel="members-defaults" class="hidden space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">New member defaults</p></div>
+              <div class="card-content space-y-3">
+                <div><label class="field-label">Default role for new invites</label><select class="select"><option>Member</option><option>Read-only</option></select></div>
+                <label class="flex items-center justify-between text-sm"><span>Allow members to invite others</span><input type="checkbox" class="switch" checked/></label>
+                <label class="flex items-center justify-between text-sm"><span>Require admin approval for new joins via domain match</span><input type="checkbox" class="switch"/></label>
+                <div><label class="field-label">Auto-join domains</label><input class="input" value="acme.com" /><p class="field-hint">Anyone signing up with this email domain joins automatically as Member.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div data-tab-panel="security" class="hidden space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">Authentication</p></div>
+              <div class="card-content space-y-3">
+                <label class="flex items-center justify-between text-sm"><span>Require 2FA for all members</span><input type="checkbox" class="switch" checked/></label>
+                <label class="flex items-center justify-between text-sm"><span>Enable SSO / SAML</span><input type="checkbox" class="switch"/></label>
+                <div><label class="field-label">Session timeout</label><select class="select"><option>8 hours</option><option>24 hours</option><option>7 days</option></select></div>
+              </div>
+            </div>
+          </div>
+
+          <div data-tab-panel="domain" class="hidden space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">Custom domain</p></div>
+              <div class="card-content space-y-3">
+                <div><label class="field-label">Domain</label><input class="input font-mono" value="app.acme.com" /></div>
+                <div class="alert alert-warning"><i data-lucide="alert-triangle"></i><div><p class="alert-title">Pending DNS verification</p><p>Add the CNAME record shown below at your DNS provider.</p></div></div>
+                <div class="font-mono text-xs bg-muted rounded-md p-3">CNAME app.acme.com → tenants.nimbus.io</div>
+              </div>
+              <div class="card-footer flex justify-end"><button class="btn btn-outline btn-sm">Verify DNS</button></div>
+            </div>
+          </div>
+
+          <div data-tab-panel="danger" class="hidden space-y-4">
+            <div class="card" style="border-color:hsl(var(--destructive)/.4)">
+              <div class="card-header"><p class="card-title" style="color:hsl(var(--destructive))">Transfer ownership</p><p class="card-description">Hand over this workspace to another Admin.</p></div>
+              <div class="card-footer flex justify-end"><button class="btn btn-outline btn-sm">Transfer workspace</button></div>
+            </div>
+            <div class="card" style="border-color:hsl(var(--destructive)/.4)">
+              <div class="card-header"><p class="card-title" style="color:hsl(var(--destructive))">Delete workspace</p><p class="card-description">Permanently deletes Acme Inc. and all its data. This cannot be undone.</p></div>
+              <div class="card-footer flex justify-end"><button class="btn btn-destructive btn-sm" data-dialog-trigger="confirm-delete">Delete workspace</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="confirm-delete">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[26rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header"><p class="card-title">Delete Acme Inc.?</p><p class="card-description">This permanently deletes all members, billing history, and data. Type the workspace name to confirm.</p></div>
+    <div class="card-content"><input class="input" placeholder="Acme Inc." /></div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-destructive" data-dialog-close onclick="showToast({title:'Workspace deletion started',variant:'destructive'})">Delete permanently</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({ title: "Workspace Settings", description: "Configuration for the Acme Inc. workspace." });
+  lucide.createIcons();
+</script>
+</body>
+</html>

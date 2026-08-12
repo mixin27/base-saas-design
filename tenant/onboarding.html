@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Onboarding — Acme Inc. Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/tenant.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="onboarding">
+<div class="shell">
+  <aside id="tenant-sidebar"></aside>
+  <div class="shell-main">
+    <header id="tenant-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid lg:grid-cols-[1fr_280px] gap-6">
+        <div class="card p-6">
+          <div class="onboard-step done">
+            <div class="flex flex-col items-center"><div class="onboard-check"><i data-lucide="check" style="width:13px;height:13px"></i></div><div class="onboard-rail"></div></div>
+            <div class="pb-8">
+              <p class="font-semibold text-sm">Create your workspace</p>
+              <p class="text-xs text-muted-foreground mt-1">Acme Inc. was created on Feb 11, 2025.</p>
+            </div>
+          </div>
+          <div class="onboard-step done">
+            <div class="flex flex-col items-center"><div class="onboard-check"><i data-lucide="check" style="width:13px;height:13px"></i></div><div class="onboard-rail"></div></div>
+            <div class="pb-8">
+              <p class="font-semibold text-sm">Invite your team</p>
+              <p class="text-xs text-muted-foreground mt-1">128 members have joined so far.</p>
+              <a href="members.html" class="btn btn-outline btn-sm mt-2">Invite more</a>
+            </div>
+          </div>
+          <div class="onboard-step done">
+            <div class="flex flex-col items-center"><div class="onboard-check"><i data-lucide="check" style="width:13px;height:13px"></i></div><div class="onboard-rail"></div></div>
+            <div class="pb-8">
+              <p class="font-semibold text-sm">Connect billing</p>
+              <p class="text-xs text-muted-foreground mt-1">Visa ending in 4242 is on file.</p>
+            </div>
+          </div>
+          <div class="onboard-step">
+            <div class="flex flex-col items-center"><div class="onboard-check"><i data-lucide="circle" style="width:13px;height:13px"></i></div><div class="onboard-rail"></div></div>
+            <div class="pb-8">
+              <p class="font-semibold text-sm">Set up roles &amp; permissions</p>
+              <p class="text-xs text-muted-foreground mt-1">Customize what each team can access beyond the default roles.</p>
+              <a href="roles.html" class="btn btn-primary btn-sm mt-2">Set up roles</a>
+            </div>
+          </div>
+          <div class="onboard-step">
+            <div class="flex flex-col items-center"><div class="onboard-check"><i data-lucide="circle" style="width:13px;height:13px"></i></div></div>
+            <div>
+              <p class="font-semibold text-sm">Generate an API access token</p>
+              <p class="text-xs text-muted-foreground mt-1">Connect Acme Inc. to your own tools and scripts.</p>
+              <a href="api.html" class="btn btn-outline btn-sm mt-2">Go to API access</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-5 h-fit">
+          <p class="text-sm font-semibold mb-1">Setup progress</p>
+          <p class="text-2xl font-bold mt-1">60%</p>
+          <div class="progress-track mt-2"><div class="progress-fill" style="width:60%"></div></div>
+          <p class="text-xs text-muted-foreground mt-3">3 of 5 steps complete. Finish setup to unlock the full workspace experience.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({ title: "Onboarding", description: "Get Acme Inc. fully set up." });
+  lucide.createIcons();
+</script>
+</body>
+</html>

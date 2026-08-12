@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Announcements — Acme Inc. Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/tenant.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="announcements">
+<div class="shell">
+  <aside id="tenant-sidebar"></aside>
+  <div class="shell-main">
+    <header id="tenant-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="tabs-list mb-4" data-tabs>
+        <button class="tabs-trigger active" data-tab-trigger="received">From Nimbus</button>
+        <button class="tabs-trigger" data-tab-trigger="internal">Internal (this workspace)</button>
+      </div>
+
+      <div data-tabs>
+        <div data-tab-panel="received" class="space-y-3">
+          <div class="card p-4 flex gap-3">
+            <div class="feature-icon shrink-0" style="width:2.2rem;height:2.2rem"><i data-lucide="shield-check" style="width:16px;height:16px"></i></div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2"><p class="text-sm font-semibold">Introducing dynamic RBAC v2</p><span class="badge badge-outline">New</span></div>
+              <p class="text-sm text-muted-foreground mt-1">Build custom roles from granular permissions instead of a fixed list. Available now on your Enterprise plan under Roles &amp; Permissions.</p>
+              <p class="text-xs text-muted-foreground mt-2">Aug 5, 2026</p>
+            </div>
+          </div>
+          <div class="card p-4 flex gap-3">
+            <!-- background:hsl(var(--warning));color:hsl(20 14% 8%) -->
+            <div class="feature-icon shrink-0" style="width:2.2rem;height:2.2rem;"><i data-lucide="wrench" style="width:16px;height:16px"></i></div>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">Scheduled maintenance — Aug 20, 2am UTC</p>
+              <p class="text-sm text-muted-foreground mt-1">Expect brief read-only mode for up to 15 minutes while we perform database maintenance.</p>
+              <p class="text-xs text-muted-foreground mt-2">Aug 12, 2026</p>
+            </div>
+          </div>
+          <div class="card p-4 flex gap-3">
+            <div class="feature-icon shrink-0" style="width:2.2rem;height:2.2rem"><i data-lucide="smartphone" style="width:16px;height:16px"></i></div>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">The Nimbus mobile app is here</p>
+              <p class="text-sm text-muted-foreground mt-1">Approve tickets, get alerts, and check on your workspace from iOS or Android.</p>
+              <p class="text-xs text-muted-foreground mt-2">Aug 1, 2026</p>
+            </div>
+          </div>
+        </div>
+
+        <div data-tab-panel="internal" class="hidden">
+          <div class="flex justify-end mb-3">
+            <button class="btn btn-primary btn-sm" data-dialog-trigger="new-internal"><i data-lucide="plus"></i> New internal announcement</button>
+          </div>
+          <div id="internal-table"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="new-internal">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">New internal announcement</p><p class="card-description">Visible to everyone in Acme Inc. only.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Title</label><input class="input" placeholder="e.g. Office closed for the holiday" /></div>
+      <div><label class="field-label">Message</label><textarea class="textarea"></textarea></div>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Announcement posted',variant:'success'})">Post to workspace</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({ title: "Announcements", description: "Updates from Nimbus, plus internal announcements for your team." });
+
+  const INTERNAL = [
+    { id: 1, title: "New expense policy starting September", author: "Jordan Mensah", date: "2026-08-09" },
+    { id: 2, title: "Office closed Aug 25 for team offsite", author: "Grace Idowu", date: "2026-08-02" },
+    { id: 3, title: "Welcome our new hires!", author: "Jordan Mensah", date: "2026-07-20" },
+  ];
+  new DataTable("#internal-table", {
+    columns: [
+      { key: "title", label: "Announcement", sortable: true },
+      { key: "author", label: "Posted by", sortable: true },
+      { key: "date", label: "Date", sortable: true },
+    ],
+    data: INTERNAL, pageSize: 10,
+    rowActions: [
+      { label: "Edit", icon: "pencil", onClick: (row) => showToast({ title: "Edit " + row.title }) },
+      { label: "Delete", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Deleted " + row.title, variant: "destructive" }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Notifications — Acme Inc. Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/tenant.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="notifications">
+<div class="shell">
+  <aside id="tenant-sidebar"></aside>
+  <div class="shell-main">
+    <header id="tenant-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid lg:grid-cols-[1fr_320px] gap-4 items-start">
+        <div class="card">
+          <div class="card-header flex items-center justify-between">
+            <div class="tabs-list" data-tabs>
+              <button class="tabs-trigger active" data-tab-trigger="all">All</button>
+              <button class="tabs-trigger" data-tab-trigger="unread">Unread</button>
+            </div>
+            <button class="btn btn-ghost btn-sm">Mark all as read</button>
+          </div>
+          <div class="card-content divide-y divide-border" style="padding:0" data-tabs>
+            <div data-tab-panel="all">
+              <div class="flex gap-3 px-5 py-4"><i data-lucide="user-plus" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div class="flex-1"><p class="text-sm">Grace Idowu invited <span class="font-medium">ravi@acme.com</span> to join as Member</p><p class="text-xs text-muted-foreground mt-0.5">1 hour ago</p></div><span class="w-2 h-2 rounded-full bg-primary mt-1.5"></span></div>
+              <div class="flex gap-3 px-5 py-4"><i data-lucide="credit-card" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div class="flex-1"><p class="text-sm">Invoice #INV-2208 was paid successfully — $1,240.00</p><p class="text-xs text-muted-foreground mt-0.5">Yesterday</p></div><span class="w-2 h-2 rounded-full bg-primary mt-1.5"></span></div>
+              <div class="flex gap-3 px-5 py-4 opacity-70"><i data-lucide="megaphone" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div class="flex-1"><p class="text-sm">New: Dynamic RBAC v2 is now available on your plan</p><p class="text-xs text-muted-foreground mt-0.5">3 days ago</p></div></div>
+              <div class="flex gap-3 px-5 py-4 opacity-70"><i data-lucide="shield" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div class="flex-1"><p class="text-sm">Role "Billing Viewer" was created by Jordan Mensah</p><p class="text-xs text-muted-foreground mt-0.5">5 days ago</p></div></div>
+              <div class="flex gap-3 px-5 py-4 opacity-70"><i data-lucide="key-round" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div class="flex-1"><p class="text-sm">New API access token created — "CI/CD pipeline"</p><p class="text-xs text-muted-foreground mt-0.5">1 week ago</p></div></div>
+              <div class="flex gap-3 px-5 py-4 opacity-70"><i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5" style="color:hsl(var(--warning))"></i><div class="flex-1"><p class="text-sm">Storage usage crossed 60% of your plan limit</p><p class="text-xs text-muted-foreground mt-0.5">2 weeks ago</p></div></div>
+            </div>
+            <div data-tab-panel="unread" class="hidden">
+              <div class="flex gap-3 px-5 py-4"><i data-lucide="user-plus" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div class="flex-1"><p class="text-sm">Grace Idowu invited <span class="font-medium">ravi@acme.com</span> to join as Member</p><p class="text-xs text-muted-foreground mt-0.5">1 hour ago</p></div><span class="w-2 h-2 rounded-full bg-primary mt-1.5"></span></div>
+              <div class="flex gap-3 px-5 py-4"><i data-lucide="credit-card" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div class="flex-1"><p class="text-sm">Invoice #INV-2208 was paid successfully — $1,240.00</p><p class="text-xs text-muted-foreground mt-0.5">Yesterday</p></div><span class="w-2 h-2 rounded-full bg-primary mt-1.5"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><p class="card-title">Preferences</p><p class="card-description">Choose what you get notified about.</p></div>
+          <div class="card-content space-y-4 text-sm">
+            <div>
+              <p class="font-medium mb-2">Team activity</p>
+              <label class="flex items-center justify-between py-1"><span class="text-muted-foreground">Member joins &amp; invites</span><input type="checkbox" class="switch" checked/></label>
+              <label class="flex items-center justify-between py-1"><span class="text-muted-foreground">Role changes</span><input type="checkbox" class="switch" checked/></label>
+            </div>
+            <div>
+              <p class="font-medium mb-2">Billing</p>
+              <label class="flex items-center justify-between py-1"><span class="text-muted-foreground">Invoices &amp; payments</span><input type="checkbox" class="switch" checked/></label>
+              <label class="flex items-center justify-between py-1"><span class="text-muted-foreground">Usage limit warnings</span><input type="checkbox" class="switch" checked/></label>
+            </div>
+            <div>
+              <p class="font-medium mb-2">Product</p>
+              <label class="flex items-center justify-between py-1"><span class="text-muted-foreground">Announcements</span><input type="checkbox" class="switch" checked/></label>
+              <label class="flex items-center justify-between py-1"><span class="text-muted-foreground">Marketing &amp; tips</span><input type="checkbox" class="switch"/></label>
+            </div>
+            <div>
+              <p class="font-medium mb-2">Delivery</p>
+              <label class="flex items-center justify-between py-1"><span class="text-muted-foreground">Email</span><input type="checkbox" class="switch" checked/></label>
+              <label class="flex items-center justify-between py-1"><span class="text-muted-foreground">Push (mobile)</span><input type="checkbox" class="switch" checked/></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({ title: "Notifications", description: "Everything that's happened in your workspace." });
+  lucide.createIcons();
+</script>
+</body>
+</html>

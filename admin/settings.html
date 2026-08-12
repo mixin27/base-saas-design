@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Platform Settings — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="settings">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid lg:grid-cols-[220px_1fr] gap-6 items-start">
+        <nav class="space-y-0.5" data-tabs>
+          <button class="nav-link w-full text-left active" data-tab-trigger="general" style="justify-content:flex-start"><i data-lucide="settings"></i> General</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="branding" style="justify-content:flex-start"><i data-lucide="palette"></i> Branding</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="security" style="justify-content:flex-start"><i data-lucide="lock"></i> Security</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="domains" style="justify-content:flex-start"><i data-lucide="globe"></i> Domains</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="billing" style="justify-content:flex-start"><i data-lucide="credit-card"></i> Platform billing</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="api" style="justify-content:flex-start"><i data-lucide="plug-zap"></i> API &amp; webhooks</button>
+          <button class="nav-link w-full text-left" data-tab-trigger="legal" style="justify-content:flex-start"><i data-lucide="scale"></i> Legal pages</button>
+        </nav>
+
+        <div data-tabs class="max-w-2xl">
+          <!-- GENERAL -->
+          <div data-tab-panel="general" class="space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">Platform identity</p></div>
+              <div class="card-content space-y-3">
+                <div><label class="field-label">Platform name</label><input class="input" value="Nimbus" /></div>
+                <div><label class="field-label">Support email</label><input class="input" value="support@nimbus.io" /></div>
+                <div><label class="field-label">Default timezone</label><select class="select"><option>UTC</option><option>America/Los_Angeles</option><option>America/New_York</option><option>Asia/Singapore</option></select></div>
+              </div>
+              <div class="card-footer flex justify-end"><button class="btn btn-primary btn-sm" onclick="showToast({title:'Settings saved',variant:'success'})">Save changes</button></div>
+            </div>
+            <div class="card"><div class="card-header"><p class="card-title">Defaults for new tenants</p></div>
+              <div class="card-content space-y-3">
+                <div><label class="field-label">Default plan</label><select class="select"><option>Starter</option><option>Growth (14-day trial)</option></select></div>
+                <label class="flex items-center justify-between text-sm"><span>Require email verification before access</span><input type="checkbox" class="switch" checked/></label>
+                <label class="flex items-center justify-between text-sm"><span>Send onboarding checklist email</span><input type="checkbox" class="switch" checked/></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- BRANDING -->
+          <div data-tab-panel="branding" class="hidden space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">Platform branding</p><p class="card-description">Used on the login screen, emails, and marketing site.</p></div>
+              <div class="card-content space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg bg-primary text-primary-foreground grid place-items-center"><i data-lucide="layers"></i></div>
+                  <button class="btn btn-outline btn-sm">Upload logo</button>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div><label class="field-label">Primary color</label><div class="flex items-center gap-2"><span class="w-8 h-8 rounded-md border border-border" style="background:hsl(var(--primary))"></span><input class="input" value="#18181B" /></div></div>
+                  <div><label class="field-label">Accent color</label><div class="flex items-center gap-2"><span class="w-8 h-8 rounded-md border border-border" style="background:hsl(var(--chart-2))"></span><input class="input" value="#2A9D8F" /></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECURITY -->
+          <div data-tab-panel="security" class="hidden space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">Authentication</p></div>
+              <div class="card-content space-y-3">
+                <label class="flex items-center justify-between text-sm"><span>Require 2FA for all platform admins</span><input type="checkbox" class="switch" checked/></label>
+                <label class="flex items-center justify-between text-sm"><span>Allow tenant-level SSO/SAML</span><input type="checkbox" class="switch" checked/></label>
+                <div><label class="field-label">Session timeout</label><select class="select"><option>4 hours</option><option>8 hours</option><option>24 hours</option></select></div>
+              </div>
+            </div>
+            <div class="card"><div class="card-header"><p class="card-title">IP allowlist</p><p class="card-description">Restrict admin console access to specific IP ranges.</p></div>
+              <div class="card-content"><textarea class="textarea font-mono" placeholder="203.0.113.0/24&#10;198.51.100.14"></textarea></div>
+            </div>
+          </div>
+
+          <!-- DOMAINS -->
+          <div data-tab-panel="domains" class="hidden space-y-4">
+            <div class="card"><div class="card-header flex items-center justify-between"><p class="card-title">Custom domains</p><button class="btn btn-outline btn-sm"><i data-lucide="plus"></i> Add domain</button></div>
+              <div class="card-content" style="padding-top:0">
+                <table class="dtable">
+                  <thead><tr><th>Domain</th><th>Tenant</th><th>Status</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td class="font-mono text-xs">app.acme.com</td><td>Acme Inc.</td><td><span class="badge badge-warning">Pending DNS</span></td><td class="text-right"><button class="btn btn-ghost btn-sm">Verify</button></td></tr>
+                    <tr><td class="font-mono text-xs">portal.umbrella.io</td><td>Umbrella Labs</td><td><span class="badge badge-success">Verified</span></td><td class="text-right"><button class="btn btn-ghost btn-sm">Manage</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- BILLING -->
+          <div data-tab-panel="billing" class="hidden space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">Payment processor</p></div>
+              <div class="card-content space-y-3">
+                <div class="flex items-center justify-between"><p class="text-sm">Stripe connection</p><span class="badge badge-success">Connected</span></div>
+                <div><label class="field-label">Publishable key</label><input class="input font-mono" value="pk_live_••••••••••••3f2A" /></div>
+                <div><label class="field-label">Webhook signing secret</label><input class="input font-mono" value="whsec_••••••••••••9k1B" /></div>
+              </div>
+            </div>
+            <div class="card"><div class="card-header"><p class="card-title">Tax &amp; invoicing</p></div>
+              <div class="card-content space-y-3">
+                <label class="flex items-center justify-between text-sm"><span>Automatic tax calculation</span><input type="checkbox" class="switch" checked/></label>
+                <div><label class="field-label">Invoice footer note</label><input class="input" value="Thank you for using Nimbus." /></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- API -->
+          <div data-tab-panel="api" class="hidden space-y-4">
+            <div class="card"><div class="card-header flex items-center justify-between"><p class="card-title">Platform API keys</p><button class="btn btn-outline btn-sm"><i data-lucide="plus"></i> Generate key</button></div>
+              <div class="card-content" style="padding-top:0">
+                <table class="dtable">
+                  <thead><tr><th>Name</th><th>Key</th><th>Created</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td>Internal ops script</td><td class="font-mono text-xs">sk_live_••••8a2f</td><td>Jun 4, 2026</td><td class="text-right"><button class="btn btn-ghost btn-sm" style="color:hsl(var(--destructive))">Revoke</button></td></tr>
+                    <tr><td>Data warehouse sync</td><td class="font-mono text-xs">sk_live_••••b91c</td><td>Mar 19, 2026</td><td class="text-right"><button class="btn btn-ghost btn-sm" style="color:hsl(var(--destructive))">Revoke</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card"><div class="card-header"><p class="card-title">Outbound webhooks</p><p class="card-description">Platform-level events (tenant.created, subscription.updated, etc.)</p></div>
+              <div class="card-content space-y-3">
+                <div><label class="field-label">Endpoint URL</label><input class="input font-mono" value="https://hooks.internal.nimbus.io/platform" /></div>
+                <div class="flex flex-wrap gap-2">
+                  <span class="badge badge-outline">tenant.created</span><span class="badge badge-outline">tenant.suspended</span><span class="badge badge-outline">subscription.updated</span><span class="badge badge-outline">invoice.payment_failed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LEGAL -->
+          <div data-tab-panel="legal" class="hidden space-y-4">
+            <div class="card"><div class="card-header"><p class="card-title">Legal pages</p><p class="card-description">Shown in the footer and referenced in emails.</p></div>
+              <div class="card-content" style="padding-top:0">
+                <table class="dtable">
+                  <thead><tr><th>Page</th><th>Last updated</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td>Terms of Service</td><td>Jul 1, 2026</td><td class="text-right"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                    <tr><td>Privacy Policy</td><td>Jul 1, 2026</td><td class="text-right"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                    <tr><td>Data Processing Agreement</td><td>Feb 14, 2026</td><td class="text-right"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({ title: "Platform Settings", description: "Platform-wide configuration and policy defaults." });
+  lucide.createIcons();
+</script>
+</body>
+</html>

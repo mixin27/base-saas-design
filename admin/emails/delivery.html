@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Delivery & Bounces — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../../shared/css/tokens.css" />
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="email-delivery">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="tabs-list mb-4" data-tabs>
+        <button class="tabs-trigger active" data-tab-trigger="log">Delivery log</button>
+        <button class="tabs-trigger" data-tab-trigger="bounces">Bounce handling</button>
+        <button class="tabs-trigger" data-tab-trigger="complaints">Complaint handling</button>
+      </div>
+
+      <div data-tabs>
+        <div data-tab-panel="log">
+          <div id="log-table"></div>
+        </div>
+
+        <div data-tab-panel="bounces" class="hidden">
+          <div class="alert mb-4"><i data-lucide="info"></i><div><p class="alert-title">Automatic suppression</p><p class="text-muted-foreground">Hard bounces are suppressed automatically after 1 occurrence; soft bounces after 5 consecutive failures. Suppressed addresses won't receive further sends until removed below.</p></div></div>
+          <div id="bounces-table"></div>
+        </div>
+
+        <div data-tab-panel="complaints" class="hidden">
+          <div class="alert alert-warning mb-4"><i data-lucide="alert-triangle"></i><div><p class="alert-title">Complaint rate: 0.03%</p><p>Stay under 0.1% to remain in good standing with mailbox providers. Complainants are auto-suppressed from marketing sends.</p></div></div>
+          <div id="complaints-table"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../shared/js/ui.js"></script>
+<script src="../../shared/js/data-table.js"></script>
+<script src="../js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Delivery & Bounce Handling",
+    description: "Per-message delivery status, bounce suppression, and spam complaint handling.",
+    breadcrumb: ["Communications", "Emails", "Delivery & bounces"],
+  });
+
+  const LOG = [
+    { id: "msg_9F21K", to: "owner@acme.com", template: "Invoice paid", status: "delivered", opened: true, time: "2026-08-12T10:41:00" },
+    { id: "msg_5C31X", to: "ghost@bounced-domain.com", template: "Weekly digest", status: "bounced", opened: false, time: "2026-08-12T10:38:00" },
+    { id: "msg_8H72Y", to: "unhappy@customer.com", template: "Marketing campaign", status: "complained", opened: true, time: "2026-08-12T09:55:00" },
+    { id: "msg_2A88P", to: "billing@initech.com", template: "Payment failed", status: "delivered", opened: false, time: "2026-08-12T09:15:00" },
+    { id: "msg_1Z77Q", to: "team@umbrella.io", template: "Weekly digest", status: "delivered", opened: true, time: "2026-08-12T06:02:00" },
+    { id: "msg_4M60Z", to: "typo@gmial.com", template: "Password reset", status: "bounced", opened: false, time: "2026-08-11T21:12:00" },
+  ];
+  const logStatus = (s) => ({
+    delivered: '<span class="badge badge-success">Delivered</span>',
+    bounced: '<span class="badge badge-destructive">Bounced</span>',
+    complained: '<span class="badge badge-destructive">Complained</span>',
+  }[s]);
+
+  new DataTable("#log-table", {
+    columns: [
+      { key: "id", label: "Message ID", sortable: true, render: r => `<span class="font-mono text-xs">${r.id}</span>` },
+      { key: "to", label: "Recipient", sortable: true },
+      { key: "template", label: "Template", sortable: true },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [{value:"delivered",label:"Delivered"},{value:"bounced",label:"Bounced"},{value:"complained",label:"Complained"}], render: r => logStatus(r.status) },
+      { key: "opened", label: "Opened", sortable: true, render: r => r.opened ? '<i data-lucide="check" class="w-4 h-4 text-success"></i>' : '<span class="text-muted-foreground">—</span>' },
+      { key: "time", label: "Time", sortable: true, searchable: false, render: r => new Date(r.time).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) },
+    ],
+    getRowId: r => r.id, data: LOG, pageSize: 10,
+    rowActions: [{ label: "View raw event", icon: "code", onClick: (row) => showToast({ title: "Event — " + row.id }) }],
+  });
+
+  const BOUNCES = [
+    { id: 1, email: "ghost@bounced-domain.com", type: "Hard", reason: "Mailbox does not exist", tenant: "Umbrella Labs", suppressed: true, date: "2026-08-12" },
+    { id: 2, email: "typo@gmial.com", type: "Hard", reason: "Domain does not exist", tenant: "Globex", suppressed: true, date: "2026-08-11" },
+    { id: 3, email: "full-inbox@customer.com", type: "Soft", reason: "Mailbox full (5 consecutive)", tenant: "Acme Inc.", suppressed: true, date: "2026-08-09" },
+    { id: 4, email: "temp-issue@customer.io", type: "Soft", reason: "Message size too large (2 attempts)", tenant: "Stark Cloud", suppressed: false, date: "2026-08-07" },
+  ];
+  new DataTable("#bounces-table", {
+    columns: [
+      { key: "email", label: "Email address", sortable: true },
+      { key: "type", label: "Bounce type", sortable: true, filterable: true, filterOptions: [{value:"Hard",label:"Hard"},{value:"Soft",label:"Soft"}], render: r => r.type === "Hard" ? '<span class="badge badge-destructive">Hard</span>' : '<span class="badge badge-warning">Soft</span>' },
+      { key: "reason", label: "Reason", sortable: false },
+      { key: "tenant", label: "Tenant", sortable: true },
+      { key: "suppressed", label: "Suppressed", sortable: true, render: r => r.suppressed ? '<span class="badge badge-secondary">Suppressed</span>' : '<span class="badge badge-outline">Monitoring</span>' },
+      { key: "date", label: "Last bounce", sortable: true },
+    ],
+    data: BOUNCES, pageSize: 10,
+    rowActions: [
+      { label: "Remove from suppression", icon: "shield-off", onClick: (row) => showToast({ title: row.email + " removed from suppression list" }) },
+      { label: "View bounce history", icon: "history", onClick: (row) => showToast({ title: "History — " + row.email }) },
+    ],
+  });
+
+  const COMPLAINTS = [
+    { id: 1, email: "unhappy@customer.com", template: "Marketing campaign", tenant: "Hooli", date: "2026-08-12", action: "Suppressed from marketing" },
+    { id: 2, email: "stop-emailing@me.com", template: "Product newsletter", tenant: "Soylent Corp", date: "2026-08-06", action: "Suppressed from marketing" },
+    { id: 3, email: "annoyed@business.com", template: "Re-engagement campaign", tenant: "Aviato", date: "2026-07-30", action: "Suppressed from marketing" },
+  ];
+  new DataTable("#complaints-table", {
+    columns: [
+      { key: "email", label: "Email address", sortable: true },
+      { key: "template", label: "Template", sortable: true },
+      { key: "tenant", label: "Tenant", sortable: true },
+      { key: "date", label: "Date", sortable: true },
+      { key: "action", label: "Action taken", sortable: false, render: r => `<span class="badge badge-outline">${r.action}</span>` },
+    ],
+    data: COMPLAINTS, pageSize: 10,
+    rowActions: [{ label: "View original email", icon: "mail", onClick: (row) => showToast({ title: "Viewing email to " + row.email }) }],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

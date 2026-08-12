@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Audit Logs — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="audit-logs">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+      <div id="audit-table"></div>
+    </main>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Audit Logs",
+    description: "Every sensitive action taken in the admin console, for compliance and debugging.",
+    actionsHtml: `<button class="btn btn-outline btn-sm"><i data-lucide="download"></i> Export CSV</button>`,
+  });
+
+  const LOGS = [
+    { id: 1, actor: "Sofia Alvarez", action: "tenant.suspended", target: "Initech", ip: "203.0.113.14", time: "2026-08-12T10:20:00" },
+    { id: 2, actor: "Marcus Webb", action: "subscription.plan_changed", target: "Globex → Scale", ip: "203.0.113.22", time: "2026-08-12T09:55:00" },
+    { id: 3, actor: "Priya Nair", action: "ticket.resolved", target: "#4019", ip: "198.51.100.9", time: "2026-08-11T15:00:00" },
+    { id: 4, actor: "Elena Popov", action: "role.permissions_updated", target: "Billing Manager", ip: "203.0.113.14", time: "2026-08-11T13:10:00" },
+    { id: 5, actor: "System", action: "email.bounce_suppressed", target: "ghost@bounced-domain.com", ip: "—", time: "2026-08-12T10:38:00" },
+    { id: 6, actor: "Sofia Alvarez", action: "feature_flag.toggled", target: "scim-provisioning → off", ip: "203.0.113.14", time: "2026-07-20T11:00:00" },
+    { id: 7, actor: "Marcus Webb", action: "tenant.impersonated", target: "Umbrella Labs", ip: "203.0.113.22", time: "2026-08-10T16:42:00" },
+    { id: 8, actor: "Leo Fischer", action: "user.invited", target: "grace@nimbus.io", ip: "198.51.100.9", time: "2026-08-05T09:00:00" },
+  ];
+
+  new DataTable("#audit-table", {
+    columns: [
+      { key: "actor", label: "Actor", sortable: true, filterable: true, filterOptions: [
+        { value: "Sofia Alvarez", label: "Sofia Alvarez" }, { value: "Marcus Webb", label: "Marcus Webb" }, { value: "Priya Nair", label: "Priya Nair" }, { value: "Elena Popov", label: "Elena Popov" }, { value: "Leo Fischer", label: "Leo Fischer" }, { value: "System", label: "System" },
+      ]},
+      { key: "action", label: "Action", sortable: true, render: r => `<span class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">${r.action}</span>` },
+      { key: "target", label: "Target", sortable: false },
+      { key: "ip", label: "IP address", sortable: false, className: "font-mono text-xs" },
+      { key: "time", label: "Timestamp", sortable: true, searchable: false, render: r => new Date(r.time).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) },
+    ],
+    data: LOGS,
+    pageSize: 10,
+    selectable: false,
+    rowActions: [{ label: "View full event", icon: "eye", onClick: (row) => showToast({ title: row.action, description: "by " + row.actor }) }],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>
