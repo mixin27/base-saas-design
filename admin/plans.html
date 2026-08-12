@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plans & Subscriptions — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="plans">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="tabs-list mb-4" data-tabs>
+        <button class="tabs-trigger active" data-tab-trigger="plans">Plans</button>
+        <button class="tabs-trigger" data-tab-trigger="addons">Add-ons</button>
+        <button class="tabs-trigger" data-tab-trigger="subs">Subscriptions</button>
+      </div>
+
+      <div data-tabs>
+        <!-- PLANS TAB -->
+        <div data-tab-panel="plans">
+          <div class="flex justify-end mb-3"><button class="btn btn-primary btn-sm" data-dialog-trigger="edit-plan"><i data-lucide="plus"></i> Add plan</button></div>
+          <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="card p-5 flex flex-col">
+              <div class="flex items-center justify-between"><p class="font-semibold">Starter</p><span class="badge badge-success">Active</span></div>
+              <p class="text-2xl font-bold mt-3">$29<span class="text-sm font-normal text-muted-foreground">/mo</span></p>
+              <p class="text-xs text-muted-foreground mt-1">412 tenants on this plan</p>
+              <ul class="text-xs text-muted-foreground mt-4 space-y-1.5 flex-1">
+                <li>· 3 tenants included</li><li>· 5,000 emails/mo</li><li>· Basic roles</li>
+              </ul>
+              <button class="btn btn-outline btn-sm w-full mt-4" data-dialog-trigger="edit-plan"><i data-lucide="pencil"></i> Edit</button>
+            </div>
+            <div class="card p-5 flex flex-col border-foreground" style="border-width:2px">
+              <div class="flex items-center justify-between"><p class="font-semibold">Growth</p><span class="badge badge-success">Active</span></div>
+              <p class="text-2xl font-bold mt-3">$99<span class="text-sm font-normal text-muted-foreground">/mo</span></p>
+              <p class="text-xs text-muted-foreground mt-1">508 tenants on this plan</p>
+              <ul class="text-xs text-muted-foreground mt-4 space-y-1.5 flex-1">
+                <li>· 50 tenants included</li><li>· 100,000 emails/mo</li><li>· Dynamic RBAC</li>
+              </ul>
+              <button class="btn btn-outline btn-sm w-full mt-4" data-dialog-trigger="edit-plan"><i data-lucide="pencil"></i> Edit</button>
+            </div>
+            <div class="card p-5 flex flex-col">
+              <div class="flex items-center justify-between"><p class="font-semibold">Scale</p><span class="badge badge-success">Active</span></div>
+              <p class="text-2xl font-bold mt-3">$299<span class="text-sm font-normal text-muted-foreground">/mo</span></p>
+              <p class="text-xs text-muted-foreground mt-1">231 tenants on this plan</p>
+              <ul class="text-xs text-muted-foreground mt-4 space-y-1.5 flex-1">
+                <li>· Unlimited tenants</li><li>· 1M emails/mo</li><li>· Add-on marketplace</li>
+              </ul>
+              <button class="btn btn-outline btn-sm w-full mt-4" data-dialog-trigger="edit-plan"><i data-lucide="pencil"></i> Edit</button>
+            </div>
+            <div class="card p-5 flex flex-col">
+              <div class="flex items-center justify-between"><p class="font-semibold">Enterprise</p><span class="badge badge-outline">Custom</span></div>
+              <p class="text-2xl font-bold mt-3">Custom</p>
+              <p class="text-xs text-muted-foreground mt-1">97 tenants on this plan</p>
+              <ul class="text-xs text-muted-foreground mt-4 space-y-1.5 flex-1">
+                <li>· SSO/SCIM</li><li>· Dedicated infra option</li><li>· Named CSM</li>
+              </ul>
+              <button class="btn btn-outline btn-sm w-full mt-4" data-dialog-trigger="edit-plan"><i data-lucide="pencil"></i> Edit</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADDONS TAB -->
+        <div data-tab-panel="addons" class="hidden">
+          <div class="flex justify-end mb-3"><button class="btn btn-primary btn-sm" data-dialog-trigger="edit-addon"><i data-lucide="plus"></i> Add add-on</button></div>
+          <div id="addons-table"></div>
+        </div>
+
+        <!-- SUBSCRIPTIONS TAB -->
+        <div data-tab-panel="subs" class="hidden">
+          <div id="subs-table"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="edit-plan">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Edit plan</p><p class="card-description">Changes apply to new subscriptions immediately; existing tenants keep their current terms unless migrated.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="field-label">Plan name</label><input class="input" value="Growth" /></div>
+        <div><label class="field-label">Monthly price</label><input class="input" value="$99" /></div>
+      </div>
+      <div><label class="field-label">Tenant limit</label><input class="input" value="50" /></div>
+      <div><label class="field-label">Included email volume / mo</label><input class="input" value="100,000" /></div>
+      <label class="flex items-center gap-2.5 text-sm pt-1"><input type="checkbox" class="checkbox" checked /> Visible on public pricing page</label>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Plan updated',variant:'success'})">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="edit-addon">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Add-on module</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Name</label><input class="input" placeholder="e.g. Extra storage (100GB)" /></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="field-label">Pricing model</label><select class="select"><option>Flat monthly</option><option>Usage-based</option><option>One-time</option></select></div>
+        <div><label class="field-label">Price</label><input class="input" placeholder="$19/mo" /></div>
+      </div>
+      <div><label class="field-label">Available on plans</label>
+        <div class="flex gap-3 mt-1.5 text-sm">
+          <label class="flex items-center gap-1.5"><input type="checkbox" class="checkbox" checked/> Growth</label>
+          <label class="flex items-center gap-1.5"><input type="checkbox" class="checkbox" checked/> Scale</label>
+          <label class="flex items-center gap-1.5"><input type="checkbox" class="checkbox" checked/> Enterprise</label>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Add-on saved',variant:'success'})">Save add-on</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Plans & Subscriptions",
+    description: "Pricing tiers, add-on modules, and the tenants subscribed to each.",
+  });
+
+  const ADDONS = [
+    { id: 1, name: "Extra storage (100GB)", pricing: "Flat monthly", price: 19, tenants: 84, status: "active" },
+    { id: 2, name: "Additional seats (per 10)", pricing: "Flat monthly", price: 39, tenants: 156, status: "active" },
+    { id: 3, name: "Priority support SLA", pricing: "Flat monthly", price: 149, tenants: 42, status: "active" },
+    { id: 4, name: "Overage email volume", pricing: "Usage-based", price: 0.001, tenants: 61, status: "active" },
+    { id: 5, name: "Dedicated IP for email", pricing: "Flat monthly", price: 79, tenants: 19, status: "active" },
+    { id: 6, name: "Legacy SMS notifications", pricing: "Usage-based", price: 0.02, tenants: 3, status: "deprecated" },
+  ];
+
+  new DataTable("#addons-table", {
+    columns: [
+      { key: "name", label: "Add-on", sortable: true },
+      { key: "pricing", label: "Pricing model", sortable: true, filterable: true, filterOptions: [{value:"Flat monthly",label:"Flat monthly"},{value:"Usage-based",label:"Usage-based"}], render: r => `<span class="badge badge-outline">${r.pricing}</span>` },
+      { key: "price", label: "Price", sortable: true, className: "font-mono", render: r => r.price < 1 ? `$${r.price}/unit` : `$${r.price}/mo` },
+      { key: "tenants", label: "Tenants using", sortable: true, className: "text-right", headerClassName: "text-right" },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [{value:"active",label:"Active"},{value:"deprecated",label:"Deprecated"}], render: r => r.status === "active" ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-outline">Deprecated</span>' },
+    ],
+    data: ADDONS,
+    pageSize: 10,
+    rowActions: [
+      { label: "Edit", icon: "pencil", onClick: (row) => showToast({ title: "Edit " + row.name }) },
+      { label: "Deprecate", icon: "archive", onClick: (row) => showToast({ title: "Deprecated " + row.name }) },
+      { type: "separator" },
+      { label: "Delete", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Deleted " + row.name, variant: "destructive" }) },
+    ],
+  });
+
+  const SUBS = [
+    { id: 1, tenant: "Acme Inc.", plan: "Enterprise", status: "active", mrr: 1240, renews: "2026-09-01", method: "Visa •••• 4242" },
+    { id: 2, tenant: "Northwind Co.", plan: "Growth", status: "trialing", mrr: 0, renews: "2026-08-16", method: "—" },
+    { id: 3, tenant: "Globex", plan: "Scale", status: "active", mrr: 640, renews: "2026-08-28", method: "Mastercard •••• 8891" },
+    { id: 4, tenant: "Stark Cloud", plan: "Scale", status: "past_due", mrr: 880, renews: "2026-08-14", method: "Visa •••• 2210" },
+    { id: 5, tenant: "Umbrella Labs", plan: "Enterprise", status: "active", mrr: 2100, renews: "2026-09-04", method: "Invoiced (NET 30)" },
+    { id: 6, tenant: "Initech", plan: "Starter", status: "canceled", mrr: 0, renews: "—", method: "—" },
+  ];
+  const subStatusBadge = (s) => ({
+    active: '<span class="badge badge-success">Active</span>',
+    trialing: '<span class="badge badge-warning">Trialing</span>',
+    past_due: '<span class="badge badge-destructive">Past due</span>',
+    canceled: '<span class="badge badge-outline">Canceled</span>',
+  }[s] || s);
+
+  new DataTable("#subs-table", {
+    columns: [
+      { key: "tenant", label: "Tenant", sortable: true },
+      { key: "plan", label: "Plan", sortable: true, filterable: true, filterOptions: [{value:"Starter",label:"Starter"},{value:"Growth",label:"Growth"},{value:"Scale",label:"Scale"},{value:"Enterprise",label:"Enterprise"}], render: r => `<span class="badge badge-outline">${r.plan}</span>` },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [{value:"active",label:"Active"},{value:"trialing",label:"Trialing"},{value:"past_due",label:"Past due"},{value:"canceled",label:"Canceled"}], render: r => subStatusBadge(r.status) },
+      { key: "mrr", label: "MRR", sortable: true, className: "text-right font-mono", headerClassName: "text-right", render: r => `$${r.mrr.toLocaleString()}` },
+      { key: "renews", label: "Renews", sortable: true },
+      { key: "method", label: "Payment method", sortable: false },
+    ],
+    data: SUBS,
+    pageSize: 10,
+    rowActions: [
+      { label: "View invoices", icon: "receipt", onClick: (row) => showToast({ title: "Invoices for " + row.tenant }) },
+      { label: "Change plan", icon: "credit-card", onClick: (row) => showToast({ title: "Change plan for " + row.tenant }) },
+      { label: "Retry payment", icon: "refresh-cw", onClick: (row) => showToast({ title: "Retrying payment for " + row.tenant }) },
+      { type: "separator" },
+      { label: "Cancel subscription", icon: "x-circle", danger: true, onClick: (row) => showToast({ title: "Canceled " + row.tenant, variant: "destructive" }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

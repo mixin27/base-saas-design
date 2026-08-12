@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tenants — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="tenants">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Total tenants</p><p class="text-2xl font-bold mt-1">1,248</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Active</p><p class="text-2xl font-bold mt-1 text-success">1,142</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Trialing</p><p class="text-2xl font-bold mt-1" style="color:hsl(24 70% 45%)">68</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Suspended / past due</p><p class="text-2xl font-bold mt-1 text-destructive">38</p></div></div>
+      </div>
+
+      <div id="tenants-table"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Add tenant dialog -->
+<div class="dialog-root hidden fixed inset-0" data-dialog="add-tenant">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Add tenant</p><p class="card-description">Provision a new workspace manually.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Workspace name</label><input class="input" placeholder="Acme Inc." /></div>
+      <div><label class="field-label">Owner email</label><input class="input" placeholder="owner@acme.com" /></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="field-label">Plan</label><select class="select"><option>Starter</option><option>Growth</option><option>Scale</option><option>Enterprise</option></select></div>
+        <div><label class="field-label">Billing cycle</label><select class="select"><option>Monthly</option><option>Annual</option></select></div>
+      </div>
+      <label class="flex items-center gap-2.5 text-sm pt-1"><input type="checkbox" class="checkbox" checked /> Send welcome email to owner</label>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Tenant created',description:'Acme Inc. has been provisioned.',variant:'success'})">Create tenant</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tenant detail sheet -->
+<div class="sheet-root hidden fixed inset-0" data-sheet="tenant-detail">
+  <div class="sheet-overlay"></div>
+  <div class="sheet-panel fixed right-0 top-0 h-full w-[30rem] max-w-[calc(100vw-2rem)] overflow-y-auto scroll-thin">
+    <div class="card-header flex items-start justify-between sticky top-0 bg-background z-10">
+      <div class="flex items-center gap-3">
+        <div class="avatar w-10 h-10 text-sm" id="td-avatar">AC</div>
+        <div><p class="card-title" id="td-name">Acme Inc.</p><p class="card-description" id="td-email">ops@acme.com</p></div>
+      </div>
+      <button class="btn btn-ghost btn-icon-sm" data-sheet-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-5">
+      <div class="tabs-list w-full" data-tabs style="display:flex">
+        <button class="tabs-trigger active flex-1" data-tab-trigger="overview">Overview</button>
+        <button class="tabs-trigger flex-1" data-tab-trigger="billing">Billing</button>
+        <button class="tabs-trigger flex-1" data-tab-trigger="activity">Activity</button>
+      </div>
+      <div data-tabs>
+        <div data-tab-panel="overview" class="space-y-4">
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div><p class="field-label">Status</p><span class="badge badge-success" id="td-status">Active</span></div>
+            <div><p class="field-label">Plan</p><span class="badge badge-outline" id="td-plan">Enterprise</span></div>
+            <div><p class="field-label">Seats used</p><p>128 / 250</p></div>
+            <div><p class="field-label">Created</p><p id="td-created">Feb 11, 2025</p></div>
+          </div>
+          <div>
+            <p class="field-label">Storage usage</p>
+            <div class="progress-track"><div class="progress-fill" style="width:64%"></div></div>
+            <p class="text-xs text-muted-foreground mt-1">64 GB of 100 GB used</p>
+          </div>
+          <div class="alert alert-warning"><i data-lucide="alert-triangle"></i><div><p class="alert-title">Custom domain pending verification</p><p>app.acme.com — DNS records added 2 days ago.</p></div></div>
+        </div>
+        <div data-tab-panel="billing" class="hidden space-y-3 text-sm">
+          <div class="flex justify-between py-2 border-b border-border"><span class="text-muted-foreground">Current plan</span><span class="font-medium">Enterprise — $1,240/mo</span></div>
+          <div class="flex justify-between py-2 border-b border-border"><span class="text-muted-foreground">Next invoice</span><span class="font-medium">Sep 1, 2026</span></div>
+          <div class="flex justify-between py-2 border-b border-border"><span class="text-muted-foreground">Payment method</span><span class="font-medium">Visa •••• 4242</span></div>
+          <div class="flex justify-between py-2"><span class="text-muted-foreground">Lifetime value</span><span class="font-medium">$28,460</span></div>
+        </div>
+        <div data-tab-panel="activity" class="hidden space-y-3 text-sm">
+          <div class="flex gap-3"><i data-lucide="log-in" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div><p>Owner logged in</p><p class="text-xs text-muted-foreground">2 hours ago</p></div></div>
+          <div class="flex gap-3"><i data-lucide="user-plus" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div><p>Invited teammate jordan@acme.com</p><p class="text-xs text-muted-foreground">Yesterday</p></div></div>
+          <div class="flex gap-3"><i data-lucide="credit-card" class="w-4 h-4 text-muted-foreground mt-0.5"></i><div><p>Upgraded from Scale to Enterprise</p><p class="text-xs text-muted-foreground">3 weeks ago</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer flex gap-2 sticky bottom-0 bg-background">
+      <button class="btn btn-outline flex-1"><i data-lucide="log-in"></i> Impersonate</button>
+      <button class="btn btn-outline btn-icon" data-tooltip="Suspend tenant"><i data-lucide="ban"></i></button>
+      <button class="btn btn-outline btn-icon" data-tooltip="Edit"><i data-lucide="pencil"></i></button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Tenants",
+    description: "Every workspace on the platform — provision, monitor, and manage from here.",
+    actionsHtml: `<button class="btn btn-outline btn-sm"><i data-lucide="download"></i> Export</button><button class="btn btn-primary btn-sm" data-dialog-trigger="add-tenant"><i data-lucide="plus"></i> Add tenant</button>`,
+  });
+
+  const TENANTS = [
+    { id: 1, name: "Acme Inc.", email: "ops@acme.com", plan: "Enterprise", status: "active", seats: 128, mrr: 1240, created: "2025-02-11" },
+    { id: 2, name: "Northwind Co.", email: "hello@northwind.io", plan: "Growth", status: "trialing", seats: 12, mrr: 0, created: "2026-06-02" },
+    { id: 3, name: "Globex", email: "it@globex.com", plan: "Scale", status: "active", seats: 64, mrr: 640, created: "2024-11-28" },
+    { id: 4, name: "Initech", email: "billing@initech.com", plan: "Starter", status: "suspended", seats: 4, mrr: 0, created: "2025-08-19" },
+    { id: 5, name: "Umbrella Labs", email: "team@umbrella.io", plan: "Enterprise", status: "active", seats: 210, mrr: 2100, created: "2023-05-04" },
+    { id: 6, name: "Wayne Digital", email: "ops@waynedigital.com", plan: "Growth", status: "active", seats: 31, mrr: 320, created: "2025-01-30" },
+    { id: 7, name: "Stark Cloud", email: "hi@starkcloud.dev", plan: "Scale", status: "past_due", seats: 64, mrr: 880, created: "2024-09-14" },
+    { id: 8, name: "Hooli", email: "team@hooli.com", plan: "Starter", status: "active", seats: 5, mrr: 49, created: "2026-03-21" },
+    { id: 9, name: "Soylent Corp", email: "ops@soylent.io", plan: "Growth", status: "active", seats: 41, mrr: 410, created: "2025-10-02" },
+    { id: 10, name: "Pied Piper", email: "founders@piedpiper.io", plan: "Starter", status: "trialing", seats: 6, mrr: 0, created: "2026-07-15" },
+    { id: 11, name: "Massive Dynamic", email: "it@massivedynamic.com", plan: "Enterprise", status: "active", seats: 340, mrr: 3400, created: "2022-12-01" },
+    { id: 12, name: "Aviato", email: "hi@aviato.io", plan: "Starter", status: "suspended", seats: 3, mrr: 0, created: "2025-04-08" },
+    { id: 13, name: "Hooli XYZ", email: "labs@hooli.com", plan: "Scale", status: "active", seats: 88, mrr: 720, created: "2024-06-19" },
+    { id: 14, name: "Bluth Co.", email: "ops@bluth.co", plan: "Growth", status: "past_due", seats: 18, mrr: 280, created: "2025-03-02" },
+    { id: 15, name: "Dunder Mifflin", email: "sales@dundermifflin.com", plan: "Starter", status: "active", seats: 9, mrr: 49, created: "2026-01-11" },
+  ];
+
+  const statusBadge = (s) => ({
+    active: '<span class="badge badge-success"><span class="dot" style="background:hsl(var(--success))"></span>Active</span>',
+    trialing: '<span class="badge badge-warning"><span class="dot" style="background:hsl(var(--warning))"></span>Trialing</span>',
+    suspended: '<span class="badge badge-destructive"><span class="dot" style="background:hsl(var(--destructive))"></span>Suspended</span>',
+    past_due: '<span class="badge badge-destructive"><span class="dot" style="background:hsl(var(--destructive))"></span>Past due</span>',
+  }[s] || s);
+
+  function openTenantDetail(row) {
+    document.getElementById("td-name").textContent = row.name;
+    document.getElementById("td-email").textContent = row.email;
+    document.getElementById("td-avatar").textContent = row.name.slice(0,2).toUpperCase();
+    document.getElementById("td-plan").textContent = row.plan;
+    document.getElementById("td-created").textContent = new Date(row.created).toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"});
+    document.getElementById("td-status").outerHTML = statusBadge(row.status).replace('<span class="badge', '<span id="td-status" class="badge');
+    openOverlayRoot(document.querySelector('[data-sheet="tenant-detail"]'));
+  }
+
+  new DataTable("#tenants-table", {
+    columns: [
+      { key: "name", label: "Tenant", sortable: true, render: (r) => `
+        <div class="flex items-center gap-2.5">
+          <div class="avatar w-7 h-7">${r.name.slice(0,2).toUpperCase()}</div>
+          <div><p class="font-medium text-foreground leading-tight">${r.name}</p><p class="text-xs text-muted-foreground">${r.email}</p></div>
+        </div>` },
+      { key: "plan", label: "Plan", sortable: true, filterable: true, filterOptions: [
+        { value: "Starter", label: "Starter" }, { value: "Growth", label: "Growth" }, { value: "Scale", label: "Scale" }, { value: "Enterprise", label: "Enterprise" },
+      ], render: (r) => `<span class="badge badge-outline">${r.plan}</span>` },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [
+        { value: "active", label: "Active" }, { value: "trialing", label: "Trialing" }, { value: "past_due", label: "Past due" }, { value: "suspended", label: "Suspended" },
+      ], render: (r) => statusBadge(r.status) },
+      { key: "seats", label: "Seats", sortable: true, className: "text-right", headerClassName: "text-right" },
+      { key: "mrr", label: "MRR", sortable: true, className: "text-right font-mono", headerClassName: "text-right", render: (r) => `$${r.mrr.toLocaleString()}` },
+      { key: "created", label: "Created", sortable: true, searchable: false, render: (r) => new Date(r.created).toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"}) },
+    ],
+    data: TENANTS,
+    pageSize: 10,
+    rowActions: [
+      { label: "View details", icon: "eye", onClick: openTenantDetail },
+      { label: "Impersonate", icon: "log-in", onClick: (row) => showToast({ title: "Impersonating " + row.name }) },
+      { label: "Edit", icon: "pencil", onClick: (row) => showToast({ title: "Edit " + row.name }) },
+      { label: "Change plan", icon: "credit-card", onClick: (row) => showToast({ title: "Change plan for " + row.name }) },
+      { type: "separator" },
+      { label: "Suspend", icon: "ban", danger: true, onClick: (row) => showToast({ title: "Suspended " + row.name, variant: "destructive" }) },
+      { label: "Delete tenant", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Deleted " + row.name, variant: "destructive" }) },
+    ],
+    bulkActions: [
+      { label: "Export selected", icon: "download", onClick: (rows) => showToast({ title: `Exporting ${rows.length} tenants` }) },
+      { label: "Email selected", icon: "mail", onClick: (rows) => showToast({ title: `Messaging ${rows.length} tenants` }) },
+      { label: "Suspend", icon: "ban", danger: true, onClick: (rows) => showToast({ title: `Suspended ${rows.length} tenants`, variant: "destructive" }) },
+    ],
+    emptyState: { icon: "building-2", title: "No tenants found", description: "Try adjusting your search or filters." },
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

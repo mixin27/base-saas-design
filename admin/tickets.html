@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Support Tickets — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="tickets">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Open</p><p class="text-2xl font-bold mt-1">27</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Breaching SLA</p><p class="text-2xl font-bold mt-1 text-destructive">4</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Avg first response</p><p class="text-2xl font-bold mt-1">42m</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Resolved this week</p><p class="text-2xl font-bold mt-1 text-success">118</p></div></div>
+      </div>
+
+      <div id="tickets-table"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Ticket detail sheet -->
+<div class="sheet-root hidden fixed inset-0" data-sheet="ticket-detail">
+  <div class="sheet-overlay"></div>
+  <div class="sheet-panel fixed right-0 top-0 h-full w-[34rem] max-w-[calc(100vw-2rem)] overflow-y-auto scroll-thin">
+    <div class="card-header flex items-start justify-between sticky top-0 bg-background z-10">
+      <div><p class="card-title" id="tk-subject">Payment retry not firing</p><p class="card-description" id="tk-meta">#4021 · Stark Cloud · Opened 3h ago</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-sheet-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-4">
+      <div class="flex flex-wrap gap-2 items-center">
+        <select class="select select-sm w-auto"><option>Urgent</option><option>Normal</option><option>Low</option></select>
+        <select class="select select-sm w-auto"><option>Open</option><option>Pending</option><option>Resolved</option></select>
+        <select class="select select-sm w-auto"><option>Priya Nair</option><option>Leo Fischer</option><option>Unassigned</option></select>
+        <span class="badge badge-destructive ml-auto"><i data-lucide="clock"></i> SLA in 42m</span>
+      </div>
+
+      <div class="tabs-list w-full" data-tabs style="display:flex">
+        <button class="tabs-trigger active flex-1" data-tab-trigger="conv">Conversation</button>
+        <button class="tabs-trigger flex-1" data-tab-trigger="notes">Internal notes</button>
+        <button class="tabs-trigger flex-1" data-tab-trigger="tenant-ctx">Tenant context</button>
+      </div>
+      <div data-tabs>
+        <div data-tab-panel="conv" class="space-y-3">
+          <div class="card p-3"><div class="flex items-center gap-2 mb-1"><div class="avatar w-6 h-6" style="font-size:.6rem">DK</div><p class="text-xs font-medium">Daniel Kim (Stark Cloud)</p><p class="text-xs text-muted-foreground ml-auto">3h ago</p></div>
+            <p class="text-sm">Our failed invoice from yesterday never retried automatically — the dunning schedule says it should retry every 3 days.</p></div>
+          <div class="card p-3 bg-accent/40"><div class="flex items-center gap-2 mb-1"><div class="avatar w-6 h-6" style="font-size:.6rem">PN</div><p class="text-xs font-medium">Priya Nair (Support)</p><p class="text-xs text-muted-foreground ml-auto">2h ago</p></div>
+            <p class="text-sm">Thanks for flagging — looking into the dunning queue for your workspace now.</p></div>
+          <textarea class="textarea" placeholder="Write a reply..."></textarea>
+          <div class="flex justify-end"><button class="btn btn-primary btn-sm" onclick="showToast({title:'Reply sent',variant:'success'})">Send reply</button></div>
+        </div>
+        <div data-tab-panel="notes" class="hidden space-y-3">
+          <div class="card p-3"><p class="text-xs text-muted-foreground mb-1">Priya Nair · 2h ago</p><p class="text-sm">Confirmed the retry job silently failed for this tenant due to a stale webhook secret. Escalating to eng.</p></div>
+          <textarea class="textarea" placeholder="Add an internal note (not visible to the tenant)..."></textarea>
+          <div class="flex justify-end"><button class="btn btn-outline btn-sm">Add note</button></div>
+        </div>
+        <div data-tab-panel="tenant-ctx" class="hidden space-y-3 text-sm">
+          <div class="flex justify-between py-2 border-b border-border"><span class="text-muted-foreground">Plan</span><span class="font-medium">Scale — $880/mo</span></div>
+          <div class="flex justify-between py-2 border-b border-border"><span class="text-muted-foreground">Status</span><span class="badge badge-destructive">Past due</span></div>
+          <div class="flex justify-between py-2 border-b border-border"><span class="text-muted-foreground">Owner</span><span class="font-medium">hi@starkcloud.dev</span></div>
+          <div class="flex justify-between py-2"><span class="text-muted-foreground">Open tickets</span><span class="font-medium">2</span></div>
+          <a href="tenants.html" class="btn btn-outline btn-sm w-full">Open tenant record</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Support Tickets",
+    description: "One shared queue across every tenant on the platform.",
+    actionsHtml: `<button class="btn btn-primary btn-sm"><i data-lucide="plus"></i> New ticket</button>`,
+  });
+
+  const TICKETS = [
+    { id: "#4021", subject: "Payment retry not firing", tenant: "Stark Cloud", priority: "Urgent", status: "open", assignee: "Priya Nair", updated: "2026-08-12T10:10:00" },
+    { id: "#4020", subject: "Can't invite teammate", tenant: "Northwind Co.", priority: "Normal", status: "pending", assignee: "Leo Fischer", updated: "2026-08-12T08:40:00" },
+    { id: "#4019", subject: "Webhook signature mismatch", tenant: "Globex", priority: "Normal", status: "resolved", assignee: "Priya Nair", updated: "2026-08-11T15:00:00" },
+    { id: "#4018", subject: "Feature request: SCIM", tenant: "Umbrella Labs", priority: "Low", status: "pending", assignee: "Unassigned", updated: "2026-08-11T09:30:00" },
+    { id: "#4017", subject: "Invoice PDF shows wrong tax", tenant: "Acme Inc.", priority: "Urgent", status: "open", assignee: "Priya Nair", updated: "2026-08-12T07:05:00" },
+    { id: "#4016", subject: "Slow dashboard load times", tenant: "Massive Dynamic", priority: "Normal", status: "open", assignee: "Leo Fischer", updated: "2026-08-11T18:20:00" },
+    { id: "#4015", subject: "2FA reset request", tenant: "Wayne Digital", priority: "Urgent", status: "resolved", assignee: "Ravi Shah", updated: "2026-08-10T13:00:00" },
+    { id: "#4014", subject: "Export CSV missing columns", tenant: "Soylent Corp", priority: "Low", status: "resolved", assignee: "Ravi Shah", updated: "2026-08-09T11:45:00" },
+  ];
+
+  const prBadge = (p) => ({ Urgent: '<span class="badge badge-destructive">Urgent</span>', Normal: '<span class="badge badge-secondary">Normal</span>', Low: '<span class="badge badge-outline">Low</span>' }[p]);
+  const stBadge = (s) => ({ open: '<span class="badge badge-warning">Open</span>', pending: '<span class="badge badge-outline">Pending</span>', resolved: '<span class="badge badge-success">Resolved</span>' }[s]);
+
+  new DataTable("#tickets-table", {
+    columns: [
+      { key: "id", label: "Ticket", sortable: true, render: (r) => `<div><p class="font-medium text-foreground">${r.id} ${r.subject}</p><p class="text-xs text-muted-foreground">${r.tenant}</p></div>` },
+      { key: "priority", label: "Priority", sortable: true, filterable: true, filterOptions: [{value:"Urgent",label:"Urgent"},{value:"Normal",label:"Normal"},{value:"Low",label:"Low"}], render: (r) => prBadge(r.priority) },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [{value:"open",label:"Open"},{value:"pending",label:"Pending"},{value:"resolved",label:"Resolved"}], render: (r) => stBadge(r.status) },
+      { key: "assignee", label: "Assignee", sortable: true, filterable: true, filterOptions: [{value:"Priya Nair",label:"Priya Nair"},{value:"Leo Fischer",label:"Leo Fischer"},{value:"Ravi Shah",label:"Ravi Shah"},{value:"Unassigned",label:"Unassigned"}] },
+      { key: "updated", label: "Updated", sortable: true, searchable: false, render: (r) => new Date(r.updated).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) },
+    ],
+    data: TICKETS,
+    pageSize: 8,
+    getRowId: (r) => r.id,
+    rowActions: [
+      { label: "Open ticket", icon: "eye", onClick: () => openOverlayRoot(document.querySelector('[data-sheet="ticket-detail"]')) },
+      { label: "Reassign", icon: "user-round", onClick: (row) => showToast({ title: "Reassign " + row.id }) },
+      { label: "Mark resolved", icon: "check-circle-2", onClick: (row) => showToast({ title: row.id + " marked resolved", variant: "success" }) },
+      { type: "separator" },
+      { label: "Delete", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Deleted " + row.id, variant: "destructive" }) },
+    ],
+    bulkActions: [
+      { label: "Reassign", icon: "user-round", onClick: (rows) => showToast({ title: `Reassigning ${rows.length} tickets` }) },
+      { label: "Mark resolved", icon: "check-circle-2", onClick: (rows) => showToast({ title: `${rows.length} tickets resolved`, variant: "success" }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

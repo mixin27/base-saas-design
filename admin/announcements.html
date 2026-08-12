@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Announcements — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="announcements">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+      <div id="ann-table"></div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="create-ann">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">New announcement</p><p class="card-description">Shown in-app as a banner, modal, or changelog entry.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Title</label><input class="input" placeholder="Scheduled maintenance on Aug 20" /></div>
+      <div><label class="field-label">Body</label><textarea class="textarea" placeholder="Write the announcement copy..."></textarea></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="field-label">Display type</label><select class="select"><option>Banner</option><option>Modal</option><option>Changelog entry</option></select></div>
+        <div><label class="field-label">Audience</label><select class="select"><option>All tenants</option><option>By plan</option><option>Specific tenants</option></select></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="field-label">Starts</label><input type="datetime-local" class="input" /></div>
+        <div><label class="field-label">Ends</label><input type="datetime-local" class="input" /></div>
+      </div>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Save as draft</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Announcement scheduled',variant:'success'})">Schedule</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Announcements",
+    description: "In-app banners, modals, and changelog entries — platform-wide or scoped to a segment.",
+    actionsHtml: `<button class="btn btn-primary btn-sm" data-dialog-trigger="create-ann"><i data-lucide="plus"></i> New announcement</button>`,
+  });
+
+  const ANN = [
+    { id: 1, title: "Scheduled maintenance — Aug 20, 2am UTC", type: "Banner", audience: "All tenants", status: "scheduled", window: "Aug 18 – Aug 20" },
+    { id: 2, title: "Introducing dynamic RBAC v2", type: "Modal", audience: "Scale, Enterprise", status: "live", window: "Aug 5 – Aug 25" },
+    { id: 3, title: "Nimbus mobile app is here", type: "Changelog", audience: "All tenants", status: "live", window: "Aug 1 – ongoing" },
+    { id: 4, title: "API rate limit changes", type: "Banner", audience: "Developers (API users)", status: "expired", window: "Jul 10 – Jul 24" },
+    { id: 5, title: "Q3 roadmap preview", type: "Changelog", audience: "All tenants", status: "draft", window: "Not scheduled" },
+  ];
+  const annStatus = (s) => ({
+    live: '<span class="badge badge-success">Live</span>',
+    scheduled: '<span class="badge badge-warning">Scheduled</span>',
+    expired: '<span class="badge badge-outline">Expired</span>',
+    draft: '<span class="badge badge-secondary">Draft</span>',
+  }[s]);
+
+  new DataTable("#ann-table", {
+    columns: [
+      { key: "title", label: "Announcement", sortable: true },
+      { key: "type", label: "Type", sortable: true, filterable: true, filterOptions: [{value:"Banner",label:"Banner"},{value:"Modal",label:"Modal"},{value:"Changelog",label:"Changelog"}], render: r => `<span class="badge badge-outline">${r.type}</span>` },
+      { key: "audience", label: "Audience", sortable: false },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [{value:"live",label:"Live"},{value:"scheduled",label:"Scheduled"},{value:"expired",label:"Expired"},{value:"draft",label:"Draft"}], render: r => annStatus(r.status) },
+      { key: "window", label: "Window", sortable: false },
+    ],
+    data: ANN,
+    pageSize: 10,
+    rowActions: [
+      { label: "Edit", icon: "pencil", onClick: (row) => showToast({ title: "Edit " + row.title }) },
+      { label: "Duplicate", icon: "copy", onClick: (row) => showToast({ title: "Duplicated " + row.title }) },
+      { label: "Preview", icon: "eye", onClick: (row) => showToast({ title: "Preview " + row.title }) },
+      { type: "separator" },
+      { label: "End now", icon: "square", onClick: (row) => showToast({ title: row.title + " ended" }) },
+      { label: "Delete", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Deleted " + row.title, variant: "destructive" }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

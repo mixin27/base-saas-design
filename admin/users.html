@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Users — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="users">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+      <div id="users-table"></div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="invite-user">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Invite platform user</p><p class="card-description">Grants access to the admin console, not a tenant workspace.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Email address</label><input class="input" placeholder="teammate@nimbus.io" /></div>
+      <div><label class="field-label">Role</label><select class="select"><option>Super Admin</option><option>Billing Manager</option><option>Support Agent</option><option>Read-only</option></select></div>
+      <p class="field-hint">Roles are managed dynamically — see Roles &amp; Permissions to customize what each one can access.</p>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Invite sent',variant:'success'})">Send invite</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Users",
+    description: "Platform staff with access to the admin console.",
+    actionsHtml: `<button class="btn btn-primary btn-sm" data-dialog-trigger="invite-user"><i data-lucide="user-plus"></i> Invite user</button>`,
+  });
+
+  const USERS = [
+    { id: 1, name: "Sofia Alvarez", email: "sofia@nimbus.io", role: "Super Admin", status: "active", lastLogin: "2026-08-12T09:20:00" },
+    { id: 2, name: "Marcus Webb", email: "marcus@nimbus.io", role: "Billing Manager", status: "active", lastLogin: "2026-08-11T14:02:00" },
+    { id: 3, name: "Priya Nair", email: "priya@nimbus.io", role: "Support Agent", status: "active", lastLogin: "2026-08-12T07:45:00" },
+    { id: 4, name: "Leo Fischer", email: "leo@nimbus.io", role: "Support Agent", status: "invited", lastLogin: null },
+    { id: 5, name: "Grace Idowu", email: "grace@nimbus.io", role: "Read-only", status: "active", lastLogin: "2026-08-05T11:10:00" },
+    { id: 6, name: "Tom Reyes", email: "tom@nimbus.io", role: "Billing Manager", status: "suspended", lastLogin: "2026-07-02T16:30:00" },
+    { id: 7, name: "Elena Popov", email: "elena@nimbus.io", role: "Super Admin", status: "active", lastLogin: "2026-08-12T08:55:00" },
+    { id: 8, name: "Ravi Shah", email: "ravi@nimbus.io", role: "Support Agent", status: "active", lastLogin: "2026-08-10T13:12:00" },
+  ];
+
+  const roleBadge = (r) => `<span class="badge badge-outline">${r}</span>`;
+  const userStatusBadge = (s) => ({
+    active: '<span class="badge badge-success">Active</span>',
+    invited: '<span class="badge badge-warning">Invited</span>',
+    suspended: '<span class="badge badge-destructive">Suspended</span>',
+  }[s] || s);
+
+  new DataTable("#users-table", {
+    columns: [
+      { key: "name", label: "User", sortable: true, render: (r) => `
+        <div class="flex items-center gap-2.5">
+          <div class="avatar w-7 h-7">${r.name.split(" ").map(n=>n[0]).join("")}</div>
+          <div><p class="font-medium text-foreground leading-tight">${r.name}</p><p class="text-xs text-muted-foreground">${r.email}</p></div>
+        </div>` },
+      { key: "role", label: "Role", sortable: true, filterable: true, filterOptions: [
+        { value: "Super Admin", label: "Super Admin" }, { value: "Billing Manager", label: "Billing Manager" }, { value: "Support Agent", label: "Support Agent" }, { value: "Read-only", label: "Read-only" },
+      ], render: (r) => roleBadge(r.role) },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [
+        { value: "active", label: "Active" }, { value: "invited", label: "Invited" }, { value: "suspended", label: "Suspended" },
+      ], render: (r) => userStatusBadge(r.status) },
+      { key: "lastLogin", label: "Last login", sortable: true, searchable: false, render: (r) => r.lastLogin ? new Date(r.lastLogin).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) : '<span class="text-muted-foreground">Never</span>' },
+    ],
+    data: USERS,
+    pageSize: 10,
+    rowActions: [
+      { label: "Edit role", icon: "shield", onClick: (row) => showToast({ title: "Edit role for " + row.name }) },
+      { label: "Resend invite", icon: "mail", onClick: (row) => showToast({ title: "Invite resent to " + row.email }) },
+      { label: "Reset password", icon: "key-round", onClick: (row) => showToast({ title: "Password reset sent" }) },
+      { type: "separator" },
+      { label: "Suspend", icon: "ban", danger: true, onClick: (row) => showToast({ title: "Suspended " + row.name, variant: "destructive" }) },
+      { label: "Remove user", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Removed " + row.name, variant: "destructive" }) },
+    ],
+    bulkActions: [
+      { label: "Send password reset", icon: "key-round", onClick: (rows) => showToast({ title: `Password reset sent to ${rows.length} users` }) },
+      { label: "Suspend", icon: "ban", danger: true, onClick: (rows) => showToast({ title: `Suspended ${rows.length} users`, variant: "destructive" }) },
+    ],
+    emptyState: { icon: "users", title: "No users found", description: "Try adjusting your search or filters." },
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

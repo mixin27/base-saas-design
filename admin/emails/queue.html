@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Email Queue — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../../shared/css/tokens.css" />
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="email-queue">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Queued</p><p class="text-2xl font-bold mt-1">1,204</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Sending</p><p class="text-2xl font-bold mt-1">86</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Sent (24h)</p><p class="text-2xl font-bold mt-1 text-success">48,210</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Retrying</p><p class="text-2xl font-bold mt-1" style="color:hsl(24 70% 45%)">42</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Failed</p><p class="text-2xl font-bold mt-1 text-destructive">9</p></div></div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-content pt-5">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-sm font-medium">Retry policy</p>
+            <button class="btn btn-outline btn-sm"><i data-lucide="settings-2"></i> Configure</button>
+          </div>
+          <p class="text-xs text-muted-foreground">Exponential backoff · up to <span class="font-medium text-foreground">5 attempts</span> · retry intervals of <span class="font-medium text-foreground">1m, 5m, 30m, 2h, 12h</span> · dead-letters to Failed after final attempt.</p>
+        </div>
+      </div>
+
+      <div id="queue-table"></div>
+    </main>
+  </div>
+</div>
+
+<script src="../../shared/js/ui.js"></script>
+<script src="../../shared/js/data-table.js"></script>
+<script src="../js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Email Queue & Retries",
+    description: "Live send queue with per-message delivery status and manual retry control.",
+    breadcrumb: ["Communications", "Emails", "Queue & retries"],
+    actionsHtml: `<button class="btn btn-outline btn-sm"><i data-lucide="refresh-cw"></i> Refresh</button>`,
+  });
+
+  const QUEUE = [
+    { id: "msg_9F21K", to: "owner@acme.com", template: "Invoice paid", status: "sent", attempts: 1, next: "—", queued: "2026-08-12T10:41:00" },
+    { id: "msg_7B02L", to: "jordan@northwind.io", template: "Team invitation", status: "sending", attempts: 1, next: "—", queued: "2026-08-12T10:40:20" },
+    { id: "msg_4D91M", to: "it@globex.com", template: "Password reset", status: "queued", attempts: 0, next: "—", queued: "2026-08-12T10:40:05" },
+    { id: "msg_2A88P", to: "billing@initech.com", template: "Payment failed", status: "retrying", attempts: 3, next: "in 28m", queued: "2026-08-12T09:15:00" },
+    { id: "msg_1Z77Q", to: "team@umbrella.io", template: "Weekly digest", status: "failed", attempts: 5, next: "—", queued: "2026-08-12T06:02:00" },
+    { id: "msg_9K44R", to: "ops@waynedigital.com", template: "Subscription upgraded", status: "sent", attempts: 1, next: "—", queued: "2026-08-12T05:55:00" },
+    { id: "msg_3T19S", to: "hi@starkcloud.dev", template: "Trial ending soon", status: "retrying", attempts: 2, next: "in 4m", queued: "2026-08-12T10:20:00" },
+    { id: "msg_6Y82U", to: "team@hooli.com", template: "New feature announcement", status: "failed", attempts: 5, next: "—", queued: "2026-08-11T22:10:00" },
+  ];
+
+  const qStatus = (s) => ({
+    sent: '<span class="badge badge-success">Sent</span>',
+    sending: '<span class="badge badge-outline">Sending</span>',
+    queued: '<span class="badge badge-secondary">Queued</span>',
+    retrying: '<span class="badge badge-warning">Retrying</span>',
+    failed: '<span class="badge badge-destructive">Failed</span>',
+  }[s]);
+
+  new DataTable("#queue-table", {
+    columns: [
+      { key: "id", label: "Message ID", sortable: true, render: r => `<span class="font-mono text-xs">${r.id}</span>` },
+      { key: "to", label: "Recipient", sortable: true },
+      { key: "template", label: "Template", sortable: true },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [
+        { value: "sent", label: "Sent" }, { value: "sending", label: "Sending" }, { value: "queued", label: "Queued" }, { value: "retrying", label: "Retrying" }, { value: "failed", label: "Failed" },
+      ], render: r => qStatus(r.status) },
+      { key: "attempts", label: "Attempts", sortable: true, className: "text-right", headerClassName: "text-right" },
+      { key: "next", label: "Next retry", sortable: false },
+      { key: "queued", label: "Queued at", sortable: true, searchable: false, render: r => new Date(r.queued).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}) },
+    ],
+    data: QUEUE,
+    getRowId: (r) => r.id,
+    pageSize: 10,
+    rowActions: [
+      { label: "View details", icon: "eye", onClick: (row) => showToast({ title: row.id, description: "Full delivery timeline" }) },
+      { label: "Retry now", icon: "refresh-cw", onClick: (row) => showToast({ title: "Retrying " + row.id }) },
+      { label: "View raw payload", icon: "code", onClick: (row) => showToast({ title: "Payload — " + row.id }) },
+      { type: "separator" },
+      { label: "Cancel", icon: "x-circle", danger: true, onClick: (row) => showToast({ title: "Canceled " + row.id, variant: "destructive" }) },
+    ],
+    bulkActions: [
+      { label: "Retry selected", icon: "refresh-cw", onClick: (rows) => showToast({ title: `Retrying ${rows.length} messages` }) },
+      { label: "Cancel selected", icon: "x-circle", danger: true, onClick: (rows) => showToast({ title: `Canceled ${rows.length} messages`, variant: "destructive" }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

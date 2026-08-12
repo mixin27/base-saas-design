@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="dashboard">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <!-- KPI cards -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card"><div class="card-content pt-5">
+          <div class="flex items-center justify-between"><p class="text-xs text-muted-foreground">Monthly recurring revenue</p><i data-lucide="trending-up" class="w-4 h-4 text-success"></i></div>
+          <p class="text-2xl font-bold mt-1.5">$84,210</p>
+          <p class="text-xs text-success mt-1 flex items-center gap-1"><i data-lucide="arrow-up-right" class="w-3 h-3"></i> 12.4% vs last month</p>
+        </div></div>
+        <div class="card"><div class="card-content pt-5">
+          <div class="flex items-center justify-between"><p class="text-xs text-muted-foreground">Active tenants</p><i data-lucide="building-2" class="w-4 h-4 text-muted-foreground"></i></div>
+          <p class="text-2xl font-bold mt-1.5">1,248</p>
+          <p class="text-xs text-success mt-1 flex items-center gap-1"><i data-lucide="arrow-up-right" class="w-3 h-3"></i> 36 added this week</p>
+        </div></div>
+        <div class="card"><div class="card-content pt-5">
+          <div class="flex items-center justify-between"><p class="text-xs text-muted-foreground">Trial conversion</p><i data-lucide="percent" class="w-4 h-4 text-muted-foreground"></i></div>
+          <p class="text-2xl font-bold mt-1.5">28.6%</p>
+          <p class="text-xs text-destructive mt-1 flex items-center gap-1"><i data-lucide="arrow-down-right" class="w-3 h-3"></i> 1.2% vs last month</p>
+        </div></div>
+        <div class="card"><div class="card-content pt-5">
+          <div class="flex items-center justify-between"><p class="text-xs text-muted-foreground">Open support tickets</p><i data-lucide="life-buoy" class="w-4 h-4 text-warning"></i></div>
+          <p class="text-2xl font-bold mt-1.5">27</p>
+          <p class="text-xs text-muted-foreground mt-1">4 breaching SLA</p>
+        </div></div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid lg:grid-cols-3 gap-4 mt-4">
+        <div class="card lg:col-span-2">
+          <div class="card-header flex items-center justify-between">
+            <div><p class="card-title">Revenue trend</p><p class="card-description">MRR over the last 6 months</p></div>
+            <div class="tabs-list" data-tabs>
+              <button class="tabs-trigger active" data-tab-trigger="6m">6M</button>
+              <button class="tabs-trigger" data-tab-trigger="12m">12M</button>
+            </div>
+          </div>
+          <div class="card-content">
+            <div id="mrr-chart" style="height:220px" data-tabs><div data-tab-panel="6m"></div><div data-tab-panel="12m" class="hidden"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><p class="card-title">Plan distribution</p><p class="card-description">Active tenants by plan</p></div>
+          <div class="card-content flex items-center gap-5">
+            <div id="plan-donut"></div>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:hsl(var(--chart-1))"></span> Starter <span class="text-muted-foreground ml-auto">412</span></div>
+              <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:hsl(var(--chart-2))"></span> Growth <span class="text-muted-foreground ml-auto">508</span></div>
+              <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:hsl(var(--chart-3))"></span> Scale <span class="text-muted-foreground ml-auto">231</span></div>
+              <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:hsl(var(--chart-4))"></span> Enterprise <span class="text-muted-foreground ml-auto">97</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-4 mt-4">
+        <div class="card">
+          <div class="card-header"><p class="card-title">Tenant growth</p><p class="card-description">New signups per month</p></div>
+          <div class="card-content"><div id="growth-chart" style="height:160px"></div></div>
+        </div>
+
+        <div class="card lg:col-span-2">
+          <div class="card-header flex items-center justify-between">
+            <div><p class="card-title">Recent support tickets</p><p class="card-description">Latest activity across all tenants</p></div>
+            <a href="tickets.html" class="btn btn-outline btn-sm">View all</a>
+          </div>
+          <div class="card-content" style="padding-top:0">
+            <table class="dtable">
+              <thead><tr><th>Ticket</th><th>Tenant</th><th>Priority</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td class="font-medium">#4021 Payment retry not firing</td><td>Stark Cloud</td><td><span class="badge badge-destructive">Urgent</span></td><td><span class="badge badge-warning">Open</span></td></tr>
+                <tr><td class="font-medium">#4020 Can't invite teammate</td><td>Northwind Co.</td><td><span class="badge badge-secondary">Normal</span></td><td><span class="badge badge-outline">Pending</span></td></tr>
+                <tr><td class="font-medium">#4019 Webhook signature mismatch</td><td>Globex</td><td><span class="badge badge-secondary">Normal</span></td><td><span class="badge badge-success">Resolved</span></td></tr>
+                <tr><td class="font-medium">#4018 Feature request: SCIM</td><td>Umbrella Labs</td><td><span class="badge badge-outline">Low</span></td><td><span class="badge badge-outline">Pending</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-4 mt-4">
+        <div class="card lg:col-span-2">
+          <div class="card-header flex items-center justify-between">
+            <div><p class="card-title">Top tenants by MRR</p></div>
+            <a href="tenants.html" class="btn btn-outline btn-sm">Manage tenants</a>
+          </div>
+          <div class="card-content" style="padding-top:0">
+            <table class="dtable">
+              <thead><tr><th>Tenant</th><th>Plan</th><th>Seats</th><th class="text-right">MRR</th></tr></thead>
+              <tbody>
+                <tr><td class="font-medium">Massive Dynamic</td><td><span class="badge badge-outline">Enterprise</span></td><td>340</td><td class="text-right font-mono">$3,400</td></tr>
+                <tr><td class="font-medium">Umbrella Labs</td><td><span class="badge badge-outline">Enterprise</span></td><td>210</td><td class="text-right font-mono">$2,100</td></tr>
+                <tr><td class="font-medium">Acme Inc.</td><td><span class="badge badge-outline">Enterprise</span></td><td>128</td><td class="text-right font-mono">$1,240</td></tr>
+                <tr><td class="font-medium">Stark Cloud</td><td><span class="badge badge-outline">Scale</span></td><td>64</td><td class="text-right font-mono">$880</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><p class="card-title">Quick actions</p></div>
+          <div class="card-content space-y-2">
+            <a href="tenants.html" class="dropdown-item border border-border" style="cursor:pointer"><i data-lucide="plus-circle"></i> Add a new tenant</a>
+            <a href="broadcast.html" class="dropdown-item border border-border" style="cursor:pointer"><i data-lucide="radio"></i> Send a broadcast</a>
+            <a href="feature-flags.html" class="dropdown-item border border-border" style="cursor:pointer"><i data-lucide="flag"></i> Roll out a feature flag</a>
+            <a href="emails/templates.html" class="dropdown-item border border-border" style="cursor:pointer"><i data-lucide="mail"></i> Edit an email template</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/charts.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Dashboard",
+    description: "Platform-wide overview across every tenant.",
+    actionsHtml: `<button class="btn btn-outline btn-sm"><i data-lucide="calendar"></i> Last 30 days</button><button class="btn btn-primary btn-sm"><i data-lucide="download"></i> Export report</button>`,
+  });
+
+  renderLineChart("mrr-chart", [52000, 58500, 61200, 69800, 76400, 84210], { height: 220 });
+  document.querySelectorAll('[data-tab-trigger="12m"]').forEach(t => t.addEventListener("click", () => renderLineChart("mrr-chart", [31000,34500,38200,41800,44100,47500,52000,58500,61200,69800,76400,84210], {height:220})));
+  document.querySelectorAll('[data-tab-trigger="6m"]').forEach(t => t.addEventListener("click", () => renderLineChart("mrr-chart", [52000, 58500, 61200, 69800, 76400, 84210], {height:220})));
+
+  renderBarChart("growth-chart", [64, 81, 58, 96, 112, 103], ["Mar","Apr","May","Jun","Jul","Aug"]);
+  renderDonut("plan-donut", [
+    { label: "Starter", value: 412, color: "hsl(var(--chart-1))" },
+    { label: "Growth", value: 508, color: "hsl(var(--chart-2))" },
+    { label: "Scale", value: 231, color: "hsl(var(--chart-3))" },
+    { label: "Enterprise", value: 97, color: "hsl(var(--chart-4))" },
+  ]);
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

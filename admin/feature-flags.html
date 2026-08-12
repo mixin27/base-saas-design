@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Feature Flags — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="feature-flags">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+      <div id="flags-table"></div>
+    </main>
+  </div>
+</div>
+
+<div class="dialog-root hidden fixed inset-0" data-dialog="create-flag">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Create feature flag</p><p class="card-description">Roll out instantly, no redeploy required.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Flag key</label><input class="input font-mono" placeholder="new-billing-ui" /></div>
+      <div><label class="field-label">Description</label><textarea class="textarea" placeholder="What does this flag control?"></textarea></div>
+      <div><label class="field-label">Rollout strategy</label>
+        <select class="select" id="rollout-strategy" onchange="document.getElementById('rollout-pct-wrap').classList.toggle('hidden', this.value!=='percentage'); document.getElementById('rollout-plan-wrap').classList.toggle('hidden', this.value!=='plan')">
+          <option value="all">All tenants</option>
+          <option value="percentage">Percentage rollout</option>
+          <option value="plan">Specific plans</option>
+          <option value="tenants">Specific tenants</option>
+        </select>
+      </div>
+      <div id="rollout-pct-wrap" class="hidden"><label class="field-label">Rollout percentage</label><input type="range" min="0" max="100" value="25" class="w-full" /></div>
+      <div id="rollout-plan-wrap" class="hidden"><label class="field-label">Plans</label>
+        <div class="flex gap-3 text-sm"><label class="flex items-center gap-1.5"><input type="checkbox" class="checkbox"/> Scale</label><label class="flex items-center gap-1.5"><input type="checkbox" class="checkbox"/> Enterprise</label></div>
+      </div>
+      <label class="flex items-center justify-between text-sm pt-1"><span>Enabled</span><input type="checkbox" class="switch" checked/></label>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Flag created',variant:'success'})">Create flag</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Feature Flags",
+    description: "Roll out by tenant, plan, or percentage — kill a feature instantly without a redeploy.",
+    actionsHtml: `<button class="btn btn-primary btn-sm" data-dialog-trigger="create-flag"><i data-lucide="plus"></i> Create flag</button>`,
+  });
+
+  const FLAGS = [
+    { id: 1, key: "new-billing-ui", desc: "Redesigned billing & invoices screen", strategy: "Percentage — 25%", enabled: true, updated: "2026-08-10" },
+    { id: 2, key: "dynamic-rbac-v2", desc: "New granular permission editor", strategy: "Plans — Scale, Enterprise", enabled: true, updated: "2026-08-05" },
+    { id: 3, key: "ai-ticket-summaries", desc: "AI-generated ticket summaries for agents", strategy: "All tenants", enabled: true, updated: "2026-07-29" },
+    { id: 4, key: "scim-provisioning", desc: "SCIM user provisioning for Enterprise", strategy: "Plans — Enterprise", enabled: false, updated: "2026-07-20" },
+    { id: 5, key: "broadcast-scheduling", desc: "Schedule broadcasts for future send", strategy: "Percentage — 60%", enabled: true, updated: "2026-08-01" },
+    { id: 6, key: "legacy-dashboard", desc: "Old dashboard layout (sunset in progress)", strategy: "Specific tenants (3)", enabled: false, updated: "2026-06-14" },
+    { id: 7, key: "usage-based-addons", desc: "Metered add-on billing", strategy: "All tenants", enabled: true, updated: "2026-08-08" },
+  ];
+
+  new DataTable("#flags-table", {
+    columns: [
+      { key: "key", label: "Flag", sortable: true, render: (r) => `<div><p class="font-mono text-xs font-medium text-foreground">${r.key}</p><p class="text-xs text-muted-foreground mt-0.5">${r.desc}</p></div>` },
+      { key: "strategy", label: "Targeting", sortable: false, render: (r) => `<span class="badge badge-outline">${r.strategy}</span>` },
+      { key: "enabled", label: "Status", sortable: true, filterable: true, filterOptions: [{value:"true",label:"Enabled"},{value:"false",label:"Disabled"}], render: (r) => r.enabled ? '<span class="badge badge-success">Enabled</span>' : '<span class="badge badge-secondary">Disabled</span>' },
+      { key: "updated", label: "Last updated", sortable: true, searchable: false },
+    ],
+    data: FLAGS.map(f => ({...f, enabled: f.enabled})),
+    pageSize: 10,
+    rowActions: [
+      { label: "Edit targeting", icon: "settings-2", onClick: (row) => showToast({ title: "Edit " + row.key }) },
+      { label: "View audit history", icon: "history", onClick: (row) => showToast({ title: "History for " + row.key }) },
+      { type: "separator" },
+      { label: "Disable", icon: "power-off", onClick: (row) => showToast({ title: row.key + " disabled" }) },
+      { label: "Delete flag", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Deleted " + row.key, variant: "destructive" }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

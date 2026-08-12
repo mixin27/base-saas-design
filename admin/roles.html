@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Roles & Permissions — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="roles">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="alert mb-4" style="border-color:hsl(var(--border))">
+        <i data-lucide="info"></i>
+        <div><p class="alert-title">Dynamic permission model</p><p class="text-muted-foreground">Roles here are composed from granular resource + action permissions — not a fixed list. Build as many custom roles as your org needs.</p></div>
+      </div>
+
+      <div class="grid lg:grid-cols-[280px_1fr] gap-4 items-start">
+        <!-- Roles list -->
+        <div class="card">
+          <div class="card-header flex items-center justify-between">
+            <p class="card-title">Roles</p>
+            <button class="btn btn-primary btn-icon-sm" data-dialog-trigger="create-role" data-tooltip="Create custom role"><i data-lucide="plus"></i></button>
+          </div>
+          <div class="card-content" style="padding-top:0">
+            <div class="input-icon-wrap mb-3"><i class="leading" data-lucide="search"></i><input class="input input-sm" placeholder="Search roles..." id="role-search" /></div>
+            <div id="roles-list" class="space-y-1"></div>
+          </div>
+        </div>
+
+        <!-- Permission matrix -->
+        <div class="card">
+          <div class="card-header flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <p class="card-title" id="role-name">Billing Manager</p>
+                <span class="badge badge-outline" id="role-system-badge">System role</span>
+              </div>
+              <p class="card-description" id="role-desc">Manage plans, subscriptions, invoices, and payment retries across all tenants.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-muted-foreground" id="role-user-count">6 users assigned</span>
+              <button class="btn btn-outline btn-sm"><i data-lucide="copy"></i> Duplicate</button>
+              <button class="btn btn-outline btn-sm" id="role-delete-btn" style="color:hsl(var(--destructive));border-color:hsl(var(--destructive)/.4)"><i data-lucide="trash-2"></i> Delete</button>
+            </div>
+          </div>
+          <div class="card-content" style="padding-top:0">
+            <div class="flex items-center justify-between py-3 border-b border-border">
+              <p class="text-xs text-muted-foreground">Toggle individual permissions, or grant/revoke a whole resource at once.</p>
+              <div class="flex items-center gap-2">
+                <button class="btn btn-outline btn-sm" id="grant-all-btn"><i data-lucide="check-check"></i> Grant all</button>
+                <button class="btn btn-outline btn-sm" id="revoke-all-btn"><i data-lucide="x"></i> Revoke all</button>
+              </div>
+            </div>
+            <div id="permission-matrix" class="divide-y divide-border"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Create role dialog -->
+<div class="dialog-root hidden fixed inset-0" data-dialog="create-role">
+  <div class="dialog-overlay"></div>
+  <div class="dialog-panel fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] max-w-[calc(100vw-2rem)]">
+    <div class="card-header flex items-start justify-between">
+      <div><p class="card-title">Create custom role</p><p class="card-description">Start blank or clone an existing role's permissions.</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-dialog-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-3">
+      <div><label class="field-label">Role name</label><input class="input" placeholder="e.g. Regional Support Lead" /></div>
+      <div><label class="field-label">Description</label><textarea class="textarea" placeholder="What is this role for?"></textarea></div>
+      <div><label class="field-label">Start from</label><select class="select"><option>Blank (no permissions)</option><option>Clone: Billing Manager</option><option>Clone: Support Agent</option><option>Clone: Read-only</option></select></div>
+    </div>
+    <div class="card-footer flex justify-end gap-2">
+      <button class="btn btn-outline" data-dialog-close>Cancel</button>
+      <button class="btn btn-primary" data-dialog-close onclick="showToast({title:'Role created',description:'Edit its permissions in the matrix.',variant:'success'})">Create role</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Roles & Permissions",
+    description: "Platform-scope RBAC. The same engine powers per-tenant roles inside each workspace.",
+  });
+
+  const RESOURCES = [
+    { key: "tenants", label: "Tenants", icon: "building-2", actions: ["view", "create", "edit", "delete", "impersonate"] },
+    { key: "users", label: "Platform users", icon: "users", actions: ["view", "invite", "edit", "suspend"] },
+    { key: "billing", label: "Billing & subscriptions", icon: "credit-card", actions: ["view", "edit", "refund", "void_invoice"] },
+    { key: "tickets", label: "Support tickets", icon: "life-buoy", actions: ["view", "respond", "close", "delete"] },
+    { key: "flags", label: "Feature flags", icon: "flag", actions: ["view", "toggle", "create", "delete"] },
+    { key: "announcements", label: "Announcements & broadcast", icon: "megaphone", actions: ["view", "create", "send", "delete"] },
+    { key: "emails", label: "Emails", icon: "mail", actions: ["view", "edit_templates", "manage_queue"] },
+    { key: "settings", label: "Platform settings", icon: "settings", actions: ["view", "edit"] },
+    { key: "roles", label: "Roles & permissions", icon: "shield", actions: ["view", "manage"] },
+  ];
+
+  const ROLES = [
+    { id: "super-admin", name: "Super Admin", description: "Full access to every resource on the platform.", system: true, users: 3 },
+    { id: "billing-manager", name: "Billing Manager", description: "Manage plans, subscriptions, invoices, and payment retries across all tenants.", system: true, users: 6 },
+    { id: "support-agent", name: "Support Agent", description: "Handle support tickets and view tenant account details.", system: true, users: 14 },
+    { id: "read-only", name: "Read-only", description: "View-only access across the console, for auditors and stakeholders.", system: true, users: 5 },
+    { id: "regional-lead", name: "Regional Support Lead", description: "Custom role for APAC support escalations.", system: false, users: 2 },
+  ];
+
+  function allPerms(value) {
+    const o = {};
+    RESOURCES.forEach((r) => r.actions.forEach((a) => (o[`${r.key}.${a}`] = value)));
+    return o;
+  }
+
+  const ROLE_PERMS = {
+    "super-admin": allPerms(true),
+    "read-only": (() => { const o = allPerms(false); RESOURCES.forEach(r => o[`${r.key}.view`] = true); return o; })(),
+    "billing-manager": Object.assign(allPerms(false), {
+      "billing.view": true, "billing.edit": true, "billing.refund": true, "billing.void_invoice": true,
+      "tenants.view": true, "tickets.view": true,
+    }),
+    "support-agent": Object.assign(allPerms(false), {
+      "tickets.view": true, "tickets.respond": true, "tickets.close": true,
+      "tenants.view": true, "users.view": true,
+    }),
+    "regional-lead": Object.assign(allPerms(false), {
+      "tickets.view": true, "tickets.respond": true, "tickets.close": true, "tenants.view": true,
+    }),
+  };
+
+  let activeRole = "billing-manager";
+
+  function actionLabel(a) { return a.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()); }
+
+  function renderRolesList(filter = "") {
+    const list = document.getElementById("roles-list");
+    const rows = ROLES.filter((r) => r.name.toLowerCase().includes(filter.toLowerCase()));
+    list.innerHTML = rows.map((r) => `
+      <button class="w-full text-left px-2.5 py-2 rounded-md ${activeRole === r.id ? "bg-accent" : "hover:bg-accent/60"}" data-role-select="${r.id}">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-medium">${r.name}</p>
+          ${r.system ? "" : '<span class="badge badge-outline" style="font-size:.6rem">Custom</span>'}
+        </div>
+        <p class="text-xs text-muted-foreground mt-0.5">${r.users} users</p>
+      </button>
+    `).join("");
+    list.querySelectorAll("[data-role-select]").forEach((btn) => btn.addEventListener("click", () => {
+      activeRole = btn.getAttribute("data-role-select");
+      renderRolesList(document.getElementById("role-search").value);
+      renderMatrix();
+    }));
+  }
+
+  function renderMatrix() {
+    const role = ROLES.find((r) => r.id === activeRole);
+    const perms = ROLE_PERMS[activeRole];
+    document.getElementById("role-name").textContent = role.name;
+    document.getElementById("role-desc").textContent = role.description;
+    document.getElementById("role-user-count").textContent = `${role.users} users assigned`;
+    document.getElementById("role-system-badge").classList.toggle("hidden", !role.system);
+    document.getElementById("role-delete-btn").disabled = role.system;
+    document.getElementById("role-delete-btn").style.opacity = role.system ? .4 : 1;
+
+    document.getElementById("permission-matrix").innerHTML = RESOURCES.map((res) => {
+      const allOn = res.actions.every((a) => perms[`${res.key}.${a}`]);
+      return `
+      <div class="py-3.5">
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center gap-2"><i data-lucide="${res.icon}" class="w-4 h-4 text-muted-foreground"></i><p class="text-sm font-medium">${res.label}</p></div>
+          <label class="flex items-center gap-2 text-xs text-muted-foreground"><input type="checkbox" class="switch" data-resource-toggle="${res.key}" ${allOn ? "checked" : ""}/> All</label>
+        </div>
+        <div class="flex flex-wrap gap-x-6 gap-y-2 pl-6">
+          ${res.actions.map((a) => `
+            <label class="flex items-center gap-2 text-sm">
+              <input type="checkbox" class="checkbox" data-perm="${res.key}.${a}" ${perms[`${res.key}.${a}`] ? "checked" : ""} ${role.system && role.id === "super-admin" ? "disabled" : ""} />
+              ${actionLabel(a)}
+            </label>`).join("")}
+        </div>
+      </div>`;
+    }).join("");
+
+    document.querySelectorAll("[data-perm]").forEach((cb) => cb.addEventListener("change", (e) => {
+      perms[e.target.getAttribute("data-perm")] = e.target.checked;
+      renderMatrix();
+    }));
+    document.querySelectorAll("[data-resource-toggle]").forEach((cb) => cb.addEventListener("change", (e) => {
+      const key = e.target.getAttribute("data-resource-toggle");
+      const res = RESOURCES.find((r) => r.key === key);
+      res.actions.forEach((a) => (perms[`${key}.${a}`] = e.target.checked));
+      renderMatrix();
+    }));
+    lucide.createIcons();
+  }
+
+  document.getElementById("role-search").addEventListener("input", (e) => renderRolesList(e.target.value));
+  document.getElementById("grant-all-btn").addEventListener("click", () => { ROLE_PERMS[activeRole] = allPerms(true); renderMatrix(); showToast({ title: "All permissions granted", variant: "success" }); });
+  document.getElementById("revoke-all-btn").addEventListener("click", () => { ROLE_PERMS[activeRole] = allPerms(false); renderMatrix(); showToast({ title: "All permissions revoked", variant: "destructive" }); });
+
+  renderRolesList();
+  renderMatrix();
+  lucide.createIcons();
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Email Templates — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../../shared/css/tokens.css" />
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="email-templates">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+      <div id="templates-table"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Template editor sheet -->
+<div class="sheet-root hidden fixed inset-0" data-sheet="template-editor">
+  <div class="sheet-overlay"></div>
+  <div class="sheet-panel fixed right-0 top-0 h-full w-[38rem] max-w-[calc(100vw-2rem)] overflow-y-auto scroll-thin">
+    <div class="card-header flex items-start justify-between sticky top-0 bg-background z-10">
+      <div><p class="card-title" id="tpl-name">Welcome email</p><p class="card-description" id="tpl-category">Onboarding · Transactional</p></div>
+      <button class="btn btn-ghost btn-icon-sm" data-sheet-close><i data-lucide="x"></i></button>
+    </div>
+    <div class="card-content space-y-4">
+      <div><label class="field-label">Subject line</label><input class="input" id="tpl-subject" value="Welcome to Nimbus, {{first_name}} 👋" /></div>
+      <div><label class="field-label">From</label><input class="input" value="Nimbus <hello@nimbus.io>" /></div>
+
+      <div class="tabs-list w-full" data-tabs style="display:flex">
+        <button class="tabs-trigger active flex-1" data-tab-trigger="preview">Preview</button>
+        <button class="tabs-trigger flex-1" data-tab-trigger="html">HTML source</button>
+        <button class="tabs-trigger flex-1" data-tab-trigger="vars">Variables</button>
+      </div>
+      <div data-tabs>
+        <div data-tab-panel="preview">
+          <div class="browser-frame-mini border border-border rounded-lg overflow-hidden">
+            <div class="bg-muted/50 border-b border-border px-3 py-2 text-xs text-muted-foreground">Preview · rendered with sample data</div>
+            <div class="p-5 bg-white text-black" style="font-family:Inter,sans-serif">
+              <div class="w-7 h-7 rounded-md bg-black text-white grid place-items-center text-xs font-bold mb-4">N</div>
+              <p class="text-lg font-bold">Welcome to Nimbus, Jordan 👋</p>
+              <p class="text-sm mt-3 text-gray-600">Your workspace <strong>Northwind Co.</strong> is ready. Here's how to get started in the next few minutes.</p>
+              <a class="inline-block mt-4 px-4 py-2 rounded-md bg-black text-white text-sm font-medium">Go to your dashboard</a>
+              <p class="text-xs text-gray-400 mt-6">Nimbus, Inc. · 123 Market St, San Francisco, CA</p>
+            </div>
+          </div>
+        </div>
+        <div data-tab-panel="html" class="hidden">
+          <textarea class="textarea font-mono" style="min-height:14rem" spellcheck="false">&lt;table role="presentation" width="100%"&gt;
+  &lt;tr&gt;&lt;td&gt;
+    &lt;h1&gt;Welcome to Nimbus, {{first_name}}&lt;/h1&gt;
+    &lt;p&gt;Your workspace {{workspace_name}} is ready.&lt;/p&gt;
+    &lt;a href="{{dashboard_url}}"&gt;Go to your dashboard&lt;/a&gt;
+  &lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;</textarea>
+        </div>
+        <div data-tab-panel="vars" class="hidden space-y-2">
+          <div class="flex items-center justify-between text-sm py-2 border-b border-border"><span class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">{{first_name}}</span><span class="text-muted-foreground">Recipient's first name</span></div>
+          <div class="flex items-center justify-between text-sm py-2 border-b border-border"><span class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">{{workspace_name}}</span><span class="text-muted-foreground">Tenant workspace name</span></div>
+          <div class="flex items-center justify-between text-sm py-2"><span class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">{{dashboard_url}}</span><span class="text-muted-foreground">Deep link to the dashboard</span></div>
+        </div>
+      </div>
+
+      <label class="flex items-center justify-between text-sm pt-1"><span>Template active</span><input type="checkbox" class="switch" checked/></label>
+    </div>
+    <div class="card-footer flex gap-2 sticky bottom-0 bg-background">
+      <button class="btn btn-outline"><i data-lucide="send"></i> Send test</button>
+      <button class="btn btn-primary flex-1" onclick="showToast({title:'Template saved',variant:'success'})">Save template</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../shared/js/ui.js"></script>
+<script src="../../shared/js/data-table.js"></script>
+<script src="../js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Email Templates",
+    description: "Every transactional and marketing template your product sends.",
+    breadcrumb: ["Communications", "Emails", "Templates"],
+    actionsHtml: `<button class="btn btn-primary btn-sm"><i data-lucide="plus"></i> New template</button>`,
+  });
+
+  const TEMPLATES = [
+    { id: 1, name: "Welcome email", category: "Onboarding", type: "Transactional", status: "active", updated: "2026-07-20" },
+    { id: 2, name: "Email verification", category: "Auth", type: "Transactional", status: "active", updated: "2026-06-11" },
+    { id: 3, name: "Password reset", category: "Auth", type: "Transactional", status: "active", updated: "2026-06-11" },
+    { id: 4, name: "Team invitation", category: "Onboarding", type: "Transactional", status: "active", updated: "2026-05-30" },
+    { id: 5, name: "Invoice paid", category: "Billing", type: "Transactional", status: "active", updated: "2026-08-01" },
+    { id: 6, name: "Payment failed", category: "Billing", type: "Transactional", status: "active", updated: "2026-08-01" },
+    { id: 7, name: "Upcoming invoice", category: "Billing", type: "Transactional", status: "active", updated: "2026-07-15" },
+    { id: 8, name: "Trial ending soon", category: "Subscription", type: "Transactional", status: "active", updated: "2026-07-02" },
+    { id: 9, name: "Subscription upgraded", category: "Subscription", type: "Transactional", status: "active", updated: "2026-06-28" },
+    { id: 10, name: "Subscription canceled", category: "Subscription", type: "Transactional", status: "active", updated: "2026-06-28" },
+    { id: 11, name: "New feature announcement", category: "Product", type: "Marketing", status: "active", updated: "2026-08-05" },
+    { id: 12, name: "Weekly digest", category: "Product", type: "Marketing", status: "draft", updated: "2026-08-09" },
+    { id: 13, name: "Re-engagement campaign", category: "Marketing", type: "Marketing", status: "draft", updated: "2026-07-25" },
+    { id: 14, name: "Product newsletter", category: "Marketing", type: "Marketing", status: "active", updated: "2026-08-03" },
+  ];
+
+  new DataTable("#templates-table", {
+    columns: [
+      { key: "name", label: "Template", sortable: true },
+      { key: "category", label: "Category", sortable: true, filterable: true, filterOptions: [
+        { value: "Onboarding", label: "Onboarding" }, { value: "Auth", label: "Auth" }, { value: "Billing", label: "Billing" },
+        { value: "Subscription", label: "Subscription" }, { value: "Product", label: "Product" }, { value: "Marketing", label: "Marketing" },
+      ], render: r => `<span class="badge badge-outline">${r.category}</span>` },
+      { key: "type", label: "Type", sortable: true, filterable: true, filterOptions: [{value:"Transactional",label:"Transactional"},{value:"Marketing",label:"Marketing"}] },
+      { key: "status", label: "Status", sortable: true, filterable: true, filterOptions: [{value:"active",label:"Active"},{value:"draft",label:"Draft"}], render: r => r.status === "active" ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-secondary">Draft</span>' },
+      { key: "updated", label: "Last edited", sortable: true, searchable: false },
+    ],
+    data: TEMPLATES,
+    pageSize: 10,
+    rowActions: [
+      { label: "Edit", icon: "pencil", onClick: (row) => { document.getElementById("tpl-name").textContent = row.name; document.getElementById("tpl-category").textContent = row.category + " · " + row.type; openOverlayRoot(document.querySelector('[data-sheet="template-editor"]')); } },
+      { label: "Duplicate", icon: "copy", onClick: (row) => showToast({ title: "Duplicated " + row.name }) },
+      { label: "Send test email", icon: "send", onClick: (row) => showToast({ title: "Test sent for " + row.name }) },
+      { type: "separator" },
+      { label: "Delete", icon: "trash-2", danger: true, onClick: (row) => showToast({ title: "Deleted " + row.name, variant: "destructive" }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

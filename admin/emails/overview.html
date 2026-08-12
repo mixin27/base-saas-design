@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Emails — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../../shared/css/tokens.css" />
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="email-overview">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Sent (30d)</p><p class="text-2xl font-bold mt-1">1.24M</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Delivery rate</p><p class="text-2xl font-bold mt-1 text-success">98.6%</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Bounce rate</p><p class="text-2xl font-bold mt-1" style="color:hsl(24 70% 45%)">1.1%</p></div></div>
+        <div class="card"><div class="card-content pt-5"><p class="text-xs text-muted-foreground">Complaint rate</p><p class="text-2xl font-bold mt-1 text-destructive">0.03%</p></div></div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-4 mt-4">
+        <div class="card lg:col-span-2">
+          <div class="card-header"><p class="card-title">Volume by category</p><p class="card-description">Last 7 days</p></div>
+          <div class="card-content"><div id="vol-chart" style="height:200px"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><p class="card-title">Queue health</p></div>
+          <div class="card-content space-y-3 text-sm">
+            <div class="flex justify-between"><span class="text-muted-foreground">Pending</span><span class="font-medium">1,204</span></div>
+            <div class="flex justify-between"><span class="text-muted-foreground">Processing</span><span class="font-medium">86</span></div>
+            <div class="flex justify-between"><span class="text-muted-foreground">Retrying</span><span class="font-medium text-warning">42</span></div>
+            <div class="flex justify-between"><span class="text-muted-foreground">Failed (needs review)</span><span class="font-medium text-destructive">9</span></div>
+            <a href="queue.html" class="btn btn-outline btn-sm w-full mt-2">Open queue</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-4 mt-4">
+        <a href="templates.html" class="card p-5 block hover:border-foreground/30">
+          <i data-lucide="layout-template" class="w-5 h-5 text-muted-foreground"></i>
+          <p class="font-semibold mt-3">Templates</p>
+          <p class="text-sm text-muted-foreground mt-1">Welcome, verification, password reset, invitations, billing, subscriptions, product & marketing emails.</p>
+        </a>
+        <a href="queue.html" class="card p-5 block hover:border-foreground/30">
+          <i data-lucide="list-ordered" class="w-5 h-5 text-muted-foreground"></i>
+          <p class="font-semibold mt-3">Queue &amp; retries</p>
+          <p class="text-sm text-muted-foreground mt-1">Live send queue with automatic retry mechanism and manual re-send.</p>
+        </a>
+        <a href="delivery.html" class="card p-5 block hover:border-foreground/30">
+          <i data-lucide="shield-alert" class="w-5 h-5 text-muted-foreground"></i>
+          <p class="font-semibold mt-3">Delivery &amp; bounces</p>
+          <p class="text-sm text-muted-foreground mt-1">Delivery status log, bounce handling, and spam complaint handling.</p>
+        </a>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../shared/js/ui.js"></script>
+<script src="../../shared/js/charts.js"></script>
+<script src="../js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Emails",
+    description: "Every email your product sends — transactional and marketing — in one system.",
+    breadcrumb: ["Communications", "Emails"],
+  });
+  renderBarChart("vol-chart", [42000, 51000, 47500, 61000, 58500, 39000, 44500], ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"], { color: "hsl(var(--chart-2))" });
+  lucide.createIcons();
+</script>
+</body>
+</html>

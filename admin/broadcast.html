@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Broadcast — Nimbus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../shared/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="../shared/css/tokens.css" />
+<link rel="stylesheet" href="../shared/css/base.css" />
+<link rel="stylesheet" href="css/admin.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="app-shell" data-page="broadcast">
+<div class="shell">
+  <aside id="admin-sidebar"></aside>
+  <div class="shell-main">
+    <header id="admin-topbar"></header>
+    <main class="shell-content">
+      <div id="page-header"></div>
+
+      <div class="grid lg:grid-cols-[1fr_320px] gap-4 items-start mb-5">
+        <div class="card">
+          <div class="card-header"><p class="card-title">Compose broadcast</p><p class="card-description">Push notification delivered to web and mobile.</p></div>
+          <div class="card-content space-y-3">
+            <div><label class="field-label">Title</label><input class="input" id="bc-title" value="New billing dashboard is live" /></div>
+            <div><label class="field-label">Message</label><textarea class="textarea" id="bc-body">We've redesigned billing — check out the new invoice view under Billing & Subscriptions.</textarea></div>
+            <div class="grid grid-cols-2 gap-3">
+              <div><label class="field-label">Audience</label>
+                <select class="select">
+                  <option>All tenants</option><option>By plan</option><option>Trialing tenants</option><option>Specific tenants</option>
+                </select>
+              </div>
+              <div><label class="field-label">Channels</label>
+                <div class="flex items-center gap-4 text-sm h-9">
+                  <label class="flex items-center gap-1.5"><input type="checkbox" class="checkbox" checked/> Push</label>
+                  <label class="flex items-center gap-1.5"><input type="checkbox" class="checkbox" checked/> In-app</label>
+                  <label class="flex items-center gap-1.5"><input type="checkbox" class="checkbox"/> Email</label>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="field-label">Send</label>
+              <div class="flex items-center gap-4 text-sm">
+                <label class="flex items-center gap-1.5"><input type="radio" name="bc-when" class="radio" checked/> Now</label>
+                <label class="flex items-center gap-1.5"><input type="radio" name="bc-when" class="radio"/> Schedule for later</label>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer flex justify-end gap-2">
+            <button class="btn btn-outline btn-sm">Save draft</button>
+            <button class="btn btn-primary btn-sm" onclick="showToast({title:'Broadcast sent',description:'Delivering to 1,180 recipients.',variant:'success'})"><i data-lucide="send"></i> Send broadcast</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><p class="card-title">Preview</p></div>
+          <div class="card-content">
+            <div class="phone-frame-mini border border-border rounded-xl p-3 bg-muted/30">
+              <div class="card p-3 shadow-none">
+                <div class="flex items-start gap-2.5">
+                  <div class="w-7 h-7 rounded-md bg-primary text-primary-foreground grid place-items-center shrink-0"><i data-lucide="layers" style="width:14px;height:14px"></i></div>
+                  <div class="min-w-0">
+                    <p class="text-xs font-semibold" id="bc-preview-title">New billing dashboard is live</p>
+                    <p class="text-xs text-muted-foreground mt-0.5" id="bc-preview-body">We've redesigned billing — check out the new invoice view under Billing &amp; Subscriptions.</p>
+                    <p class="text-[10px] text-muted-foreground mt-1">now · Nimbus</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground mt-3">Estimated reach: <span class="font-medium text-foreground">1,180 recipients</span> across 1,248 tenants.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-title mb-3 text-base">Broadcast history</div>
+      <div id="broadcast-table"></div>
+    </main>
+  </div>
+</div>
+
+<script src="../shared/js/ui.js"></script>
+<script src="../shared/js/data-table.js"></script>
+<script src="js/shell.js"></script>
+<script>
+  document.getElementById("page-header").innerHTML = pageHeader({
+    title: "Broadcast",
+    description: "Push in-app and mobile notifications platform-wide or to a segment.",
+  });
+
+  document.getElementById("bc-title").addEventListener("input", (e) => document.getElementById("bc-preview-title").textContent = e.target.value || "Notification title");
+  document.getElementById("bc-body").addEventListener("input", (e) => document.getElementById("bc-preview-body").textContent = e.target.value || "Message body");
+
+  const BROADCASTS = [
+    { id: 1, title: "New billing dashboard is live", audience: "All tenants", channels: "Push, In-app", recipients: 1180, delivered: 98.2, sent: "2026-08-10T09:00:00" },
+    { id: 2, title: "Scheduled maintenance reminder", audience: "All tenants", channels: "Push, Email", recipients: 1248, delivered: 96.7, sent: "2026-08-08T14:00:00" },
+    { id: 3, title: "Welcome to the new mobile app", audience: "Growth, Scale", audience2: "", channels: "Push", recipients: 739, delivered: 94.1, sent: "2026-08-01T11:00:00" },
+    { id: 4, title: "Trial ending soon reminder", audience: "Trialing tenants", channels: "In-app, Email", recipients: 68, delivered: 99.0, sent: "2026-07-27T08:30:00" },
+    { id: 5, title: "API rate limit change notice", audience: "Specific tenants", channels: "In-app", recipients: 214, delivered: 97.4, sent: "2026-07-12T10:00:00" },
+  ];
+
+  new DataTable("#broadcast-table", {
+    columns: [
+      { key: "title", label: "Broadcast", sortable: true },
+      { key: "audience", label: "Audience", sortable: true },
+      { key: "channels", label: "Channels", sortable: false, render: r => r.channels.split(", ").map(c => `<span class="badge badge-outline mr-1">${c}</span>`).join("") },
+      { key: "recipients", label: "Recipients", sortable: true, className: "text-right", headerClassName: "text-right" },
+      { key: "delivered", label: "Delivered", sortable: true, className: "text-right", headerClassName: "text-right", render: r => `${r.delivered}%` },
+      { key: "sent", label: "Sent", sortable: true, searchable: false, render: r => new Date(r.sent).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}) },
+    ],
+    data: BROADCASTS,
+    pageSize: 10,
+    rowActions: [
+      { label: "View delivery report", icon: "bar-chart-2", onClick: (row) => showToast({ title: "Delivery report — " + row.title }) },
+      { label: "Duplicate", icon: "copy", onClick: (row) => showToast({ title: "Duplicated " + row.title }) },
+    ],
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>
